@@ -14,9 +14,9 @@ License
 Documentation
 -------------
 
-- [Installation Guides](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/Tex/Installation%20Guides.pdf) (PDF)
-- [Coding Conventions](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/TeX/Coding%20Conventions.pdf) (PDF)
-- [Name Conventions](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/Tex/Name%20Conventions.pdf) (PDF)
+- [Installation Guides](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/Tex/Installation%20Guides/Installation%20Guides.pdf) (PDF)
+- [Coding Conventions](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/TeX/Coding%20Conventions/Coding%20Conventions.pdf) (PDF)
+- [Name Conventions](https://github.com/LukasBanana/ForkENGINE/blob/master/docu/Tex/Name%20Conventions/Name%20Conventions.pdf) (PDF)
 
 
 Build
