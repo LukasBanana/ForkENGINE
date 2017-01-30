@@ -4,7 +4,7 @@ ForkENGINE
 Note that this is an unfinished project, which I (Lukas Hermanns) worked on from 2014 to 2015.
 Feel free to use it for 3D demos or prototyping, but I highly recommend you to **not** use it for actual game projects.
 
-<p align="center"><img src="docu/Screenshots/Editor_1.png.png" width="768" height="486"/></p>
+<p align="center"><img src="docu/Screenshots/Editor_1.png" width="768" height="486"/></p>
 
 
 License
