@@ -1,0 +1,255 @@
+\documentclass{article}
+\title{ForkENGINE Installation Guides}
+\author{Lukas Hermanns}
+\date{March 2014}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pxfonts}
+\usepackage{geometry}
+\usepackage{hyperref}
+
+\geometry{
+	a4paper,
+	top=20mm,
+	bottom=20mm
+}
+
+\begin{document}
+
+\definecolor{brightBlueColor}{rgb}{0.5, 0.5, 1.0}
+\definecolor{darkBlueColor}{rgb}{0.0, 0.0, 0.5}
+
+\lstset{
+	language = C++,
+	basicstyle = \footnotesize\ttfamily,
+	commentstyle = \itshape\color{brightBlueColor},
+	keywordstyle = \bfseries\color{darkBlueColor},
+	stringstyle = \color{red},
+	frame = single,
+	tabsize = 2
+}
+
+\maketitle
+
+\section{Compiler}
+The ForkENGINE has been written in modern C++11. Currently the following compilers are supported:
+
+\begin{itemize}
+
+\item
+\href{http://www.microsoft.com/en-us/download/details.aspx?id=40787}{Microsoft VisualC++ 2013 (MSVC12)}
+
+\item
+\href{http://www.mingw.org/}{MinGW 4.7.1 (GNU C++)}
+
+\end{itemize}
+
+\section{Setup}
+
+\subsection{Include Directory}
+Set the include directory to "ForkENGINE/include".
+In your sources you can then include the engine modules like in the following example:
+
+\begin{lstlisting}
+#include <fengine/core.h>
+#include <fengine/video.h>
+#include <fengine/scene.h>
+\end{lstlisting}
+
+Or if you always want to include everything, use this header file:
+
+\begin{lstlisting}
+#include <fengine/import.h>
+\end{lstlisting}
+
+\subsection{Library Directory}
+There are several library directories.
+
+\begin{itemize}
+
+\item
+Use "ForkENGINE/lib/MSVC12/Win32" when you are creating a 32-bit project with Microsoft Visual Studio 2013.
+
+\item
+Use "ForkENGINE/lib/MSVC12/Win64" when you are creating a 64-bit project with Microsoft Visual Studio 2013.
+
+\item
+Use "ForkENGINE/lib/MinGW" when you are creating a 32-bit project with MinGW on MS/Windows.
+
+\item
+Use "ForkENGINE/lib/Posix" when you are creating a 32-bit project with GNU/C++ on a posix system (e.g. GNU/Linux).
+
+\end{itemize}
+
+Only link to the libraries you need in your projects.
+You'll find a list of all libraries and a brief description in the "Libraries" section.
+
+\subsection{Binary Directory}
+
+\subsubsection{MS/Windows}
+On MS/Windows, the engine consists of the following binary files:
+
+\begin{itemize}
+
+\item
+ForkAnimation.dll
+
+\item
+ForkAudio.dll
+
+\item
+ForkAudioAL.dll (\textit{OpenAL} audio system)
+
+\item
+ForkAudioXA2.dll (\textit{XAudio 2} audio system)
+
+\item
+ForkCore.dll (\textit{IO}, \textit{Math} and \textit{Platform} core systems)
+
+\item
+ForkENGINE.dll
+
+\item
+ForkNetwork.dll
+
+\item
+ForkPhysics.dll
+
+\item
+ForkPhysicsNw.dll (\textit{Newton Game Dynamics} physics system)
+
+\item
+ForkPhysicsPx.dll (\textit{NVIDIA PhysX} physics system)
+
+\item
+ForkRenderer.dll
+
+\item
+ForkRendererD3D11.dll (\textit{Direct3D 11.0} render system)
+
+\item
+ForkRendererGL.dll (\textit{OpenGL} render system)
+
+\item
+ForkScript.dll
+
+\item
+ForkScene.dll
+
+\item
+ForkUtility.dll
+
+\item
+OpenAL32.dll (OpenAL low level audio library)
+
+\end{itemize}
+
+The best way to use the binary files is to add the directory (respective to the used library directory,
+(e.g. "ForkENGINE/bin/MSVC12/Win32") to the PATH variable on MS/Windows.
+
+\subsubsection{Posix}
+On posix systems (e.g. GNU/Linux), the engine consists of the following binary files:
+
+\begin{itemize}
+
+\item
+ForkAnimation.so
+
+\item
+ForkAudio.so
+
+\item
+ForkAudioAL.so (\textit{OpenAL} audio system)
+
+\item
+ForkCore.so
+
+\item
+ForkENGINE.so
+
+\item
+ForkNetwork.so
+
+\item
+ForkPhysics.so
+
+\item
+ForkPhysicsNw.so (\textit{Newton Game Dynamics} physics system)
+
+\item
+ForkRenderer.so
+
+\item
+ForkRendererGL.so (\textit{OpenGL} render system)
+
+\item
+ForkScript.so
+
+\item
+ForkScene.so
+
+\item
+ForkUtility.so
+
+\end{itemize}
+
+\subsection{Dependencies}
+The ForkENGINE has been written very modular, i.e. some libraries are loaded dynamically during run-time.
+The render system implementations for instance are not statically linked to the engine and therefore
+should not be linked statically to your projects.
+
+The advantage is that if the host computer does not provide some libraries,
+your application can handle this dynamically and choose another render system.
+
+Consider the following situation: your application wants to create a Direct3D 11 render system
+but the host computer does not have the d3d11.dll on MS/Windows.
+A common result is, that the user gets an error message which states,
+that a DLL is missing and the program should be re-installed.
+
+In the case of the ForkENGINE your application can catch an exception and
+create another render system, OpenGL for instance (which runs almost on all platforms).
+This will reduce errors and libraries can be added or removed in a dynamic manner.
+
+\section{Libraries}
+
+The ForkENGINE consists of the following libraries:
+
+\subsection{ForkCore}
+Contains core functionalities: platform dependent code (such as creating a frame - also called "window"),
+input devices (mouse and keyboard), extended file access and math functions.
+
+\subsection{ForkScene}
+Scene management library.
+
+\subsection{ForkAnimation}
+Animation library.
+
+\subsection{ForkRenderer}
+Render system library.
+There are further libraries which will be loaded dynamically during run-time.
+These are "ForkRendererGL" (OpenGL) and "ForkRendererD3D11" (Direct3D 11.0).
+
+\subsection{ForkNetwork}
+Network library.
+
+\subsection{ForkUtility}
+Utility library.
+
+\subsection{ForkAudio}
+Audio library.
+There are further libraries which will be loaded dynamically during run-time.
+These are "ForkAudioAL" (OpenAL) and "ForkAudioXA2" (XAudio 2).
+
+\subsection{ForkPhysics}
+Physics and collision library.
+There are further libraries which will be loaded dynamically during run-time.
+These are "ForkPhysicsNw" (Newton Game Dynamics) and "ForkPhysicsPx" (NVIDIA PhysX).
+
+\subsection{ForkScript}
+Scripting library. This includes the \textbf{Mono scripting engine}.
+
+\subsection{ForkENGINE}
+Engine Device etc., connects all sub-libraries.
+
+\end{document}

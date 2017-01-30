@@ -1,0 +1,55 @@
+
+#version 330
+
+//#extension GL_EXT_texture_array : enable
+
+//uniform sampler2DArray tex;
+uniform sampler2D tex;
+
+in vec3 vertexNormal;
+in vec2 vertexTexCoord;
+
+out vec4 fragColor;
+
+layout(std140) uniform pixelParam
+{
+    vec4 color;
+	ivec4 flags;
+};
+
+void main()
+{
+	vec3 lightDir = vec3(0, 0, 1);
+	float NdotL = max(0.2, -dot(normalize(vertexNormal), lightDir));
+	
+	if (flags.y == 0)
+		NdotL = 1.0;
+	
+	vec2 tc = vertexTexCoord;
+	vec3 texSample = vec3(0.0);
+	
+	#if 0
+	float scale = 5.0;
+	
+	if ( (fract(tc.x * scale) - 0.5) *
+		 (fract(tc.y * scale) - 0.5) > 0.0 )
+	{
+		texSample = vec3(1.0);
+	}
+	#elif 0
+	texSample.xy = tc;
+	#else
+	if (flags.x != 0)
+	{
+		//texSample = texture2DArray(tex, vec3(tc, 0.0)).rgb;
+		texSample = texture2D(tex, tc).rgb;
+	}
+	else
+	{
+		texSample = vec3(1.0);
+	}
+	#endif
+	
+    fragColor = color * vec4(vec3(NdotL), 1.0) * vec4(texSample, 1.0);
+	//fragColor += vec4(1.0, 0.0, 0.0, 0.0)
+}

@@ -1,0 +1,87 @@
+\documentclass{article}
+\title{ForkENGINE Name Conventions}
+\author{Lukas Hermanns}
+\date{March 2014}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pxfonts}
+\usepackage{geometry}
+
+\geometry{
+	a4paper,
+	top=20mm,
+	bottom=20mm
+}
+
+\begin{document}
+
+\definecolor{brightBlueColor}{rgb}{0.5, 0.5, 1.0}
+\definecolor{darkBlueColor}{rgb}{0.0, 0.0, 0.5}
+
+\lstset{
+	language = C++,
+	basicstyle = \footnotesize\ttfamily,
+	commentstyle = \itshape\color{brightBlueColor},
+	keywordstyle = \bfseries\color{darkBlueColor},
+	stringstyle = \color{red},
+	frame = single,
+	tabsize = 2
+}
+
+\maketitle
+\begin{itemize}
+
+\item
+A \textbf{Vector} (2D, 3D, 4D) in this engine is the same as a \textbf{Point} (2D, 3D, 4D).
+Although a 3D vector for instance will not be translated by a 4x4 matrix (in mathematical definition),
+this is not the case in this engine. A 3D vector, and a 3D point as well, will always be translated by a 4x4 matrix.
+Excpect a specific function such as "RotateVector" is used.
+
+This is due to avoid redundant code. The type "Point" is just a type alias to "Vector".
+Or to be precise: "Point2" refers to "Vector2", "Point3" refers to "Vector3" and "Point4" refers to "Vector4".
+
+The "Point" alias is used to denote the intended purpose of function parameters.
+
+\begin{lstlisting}
+// Example:
+void MoveSomething(Vector3f direction);
+void LocateSomething(Point3f position);
+\end{lstlisting}
+
+\item
+A \textbf{Vertex} denotes a data structure which consists of at least a 2D or 3D \textit{Coordinate} and
+optionally a \textit{Normal}, \textit{Color}, \textit{Texture Coordinates} and custom attributes,
+such as \textit{Bone Weights} for animated vertices.
+
+\item
+A \textbf{Geometry} denotes any kind of geometry data. From a simple billboard (view-facing quad) to the point of a terrain.
+
+\item
+A \textbf{Mesh} or \textbf{MeshGeometry} denotes a set of \textit{Vertices} and optionally a set of \textit{Indices}.
+
+\item
+A \textbf{Model} or \textbf{GeometryNode} denotes a 2D or 3D model which consists of a set of \textit{Geometries}, \textit{Textures} and \textit{Materials}.
+In a lower level it is called \textit{GeometryNode} and on a higher level (e.g. the Editor) it is called \textit{Model}.
+
+\item
+A \textbf{Material} denotes a data structure which consists of \textit{Geometry} material (or rather surface) settings,
+such as \textit{Color}, \textit{Roughness} etc. or a physics material which provides settings for \textit{Friction}, \textit{Softness} and \textit{Collidability}.
+There are two classes with this name: "Scene::Material" and "Physics::Material".
+
+\item
+A \textbf{Collider} denotes a physics collision geometry. This can be \textit{BoxCollider}, \textit{CapsuleCollider}, \textit{CompoundCollider} etc..
+
+\item
+A \textbf{GameObject} is the a common object inside the \textit{Game Engine}. This can be a camera, mesh etc.
+
+\item
+An \textbf{Entity} is an object inside the \textit{World Editor}. This can be a camera entity or a geometry entity for instance.
+
+\item
+An \textbf{Asset} is an object inside the \textit{Asset Browser} of the world editor.
+This can be a texture asset or a model asset for instance.
+
+\end{itemize}
+
+\end{document}

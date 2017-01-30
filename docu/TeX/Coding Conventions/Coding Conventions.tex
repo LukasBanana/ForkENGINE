@@ -1,0 +1,511 @@
+\documentclass{article}
+\title{ForkENGINE Coding Conventions}
+\author{Lukas Hermanns}
+\date{March 2014}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pxfonts}
+\usepackage{geometry}
+\usepackage[T1]{fontenc}
+
+\geometry{
+	a4paper,
+	top=20mm,
+	bottom=20mm
+}
+
+\begin{document}
+
+\definecolor{brightBlueColor}{rgb}{0.5, 0.5, 1.0}
+\definecolor{darkBlueColor}{rgb}{0.0, 0.0, 0.5}
+
+\lstset{
+	language = C++,
+	basicstyle = \footnotesize\ttfamily,
+	commentstyle = \itshape\color{brightBlueColor},
+	keywordstyle = \bfseries\color{darkBlueColor},
+	stringstyle = \color{red},
+	frame = single,
+	tabsize = 2
+}
+
+\maketitle
+\begin{itemize}
+
+\item
+\textbf{Namespaces}, \textbf{classes}, \textbf{structures}, \textbf{enumerations}, \textbf{enumeration entries}, \textbf{functions},
+\textbf{function objects} (also lambdas), \textbf{function interfaces} and \textbf{template typename or class arguments} begin in \textit{upper case}:
+
+\begin{lstlisting}
+namespace Math
+{
+class Vector2 { /* ... */ };
+}
+
+enum class ColorFlags
+{
+	Red, Green, Blue
+};
+
+auto AbsDotProduct = [](const Math::Vector2f& a, const Math::Vector2f& b)
+{
+	return
+		std::abs(a.x)*std::abs(b.x) +
+		std::abs(a.y)*std::abs(b.y);
+};
+
+typedef std::function<void (int x, int y)> DrawCallback;
+
+template <typename Type, class Class, int num, ColorFlags flag> /* ... */
+\end{lstlisting}
+
+\item
+\textbf{Variables}, \textbf{constants} and \textbf{static-constants} begin in \textit{lower case}:
+
+\begin{lstlisting}
+std::string firstName;
+std::string filename;
+std::vector<Vertex> vertices;
+Video::VertexBufferPtr vertexBuffer;
+static const float pi = 3.141592654f;
+\end{lstlisting}
+
+\item
+\textbf{Macros} are always entirely in \textit{upper case}. Names are separated by \textit{underscores}:
+
+\begin{lstlisting}
+#define MAX_NUM_LIGHTS  8
+#define LIGHT_MIN       0.2
+#define LIGHT_RANGE     (1.0 - LIGHT_MIN)
+\end{lstlisting}
+
+\item
+Curly brackets are written like it's typical for C++:
+
+\begin{lstlisting}
+// Examples:
+void Function()
+{
+	/* Some statements */
+}
+
+if (/* Any expression */)
+{
+	/* Some condition statements */
+}
+
+{
+	/* Simple block */
+}
+\end{lstlisting}
+
+Don't write Java like `Egyptian Brackets':
+
+\begin{lstlisting}
+// False examples:
+void Function() {
+	/* ... */
+}
+
+if (/* ... */) {
+	/* ... */
+}
+\end{lstlisting}
+
+An exception for this is when you write very small lambdas:
+
+\begin{lstlisting}
+auto IsWhiteSpace = [](char chr) { return chr == ' ' || chr == '\t'; };
+\end{lstlisting}
+
+\item
+All \textbf{private} member variables end with underscore ('\_'), e.g. "int memberVar\_;", "Math::Vector3f position\_;" etc.
+
+\item
+Mixed public and private (or protected) class members are allowed, when they are meaningful.
+
+\begin{lstlisting}
+class Person
+{
+	public:
+		Person(int age);
+		int GetAge() const;
+		std::string name;
+	private:
+		int age_;
+};
+\end{lstlisting}
+
+\item
+Every simple getter function should start with "Get", and every simple setter function should start with "Set".
+
+Example for getter/ setter:
+
+\begin{lstlisting}
+float GetHeight() const
+{
+	return height_;
+}
+void SetHeight(float height)
+{
+	height_ = height;
+}
+\end{lstlisting}
+
+Example for non-getter/ setter: (because the return value is not a simple member variable,
+e.g. for a linked list this could take several computations to determine the list size)
+
+\begin{lstlisting}
+size_t Size() const
+{
+	return container.size();
+}
+void Resize(size_t size)
+{
+	container.resize(size);
+}
+\end{lstlisting}
+
+An exception for getters is when static members are returned:
+
+\begin{lstlisting}
+class Mouse
+{
+	public:
+		static Mouse* Instance()
+		{
+			return instance_;
+		}
+	private:
+		static Mouse* instance_;
+};
+\end{lstlisting}
+\begin{lstlisting}
+class RenderContext
+{
+	public:
+		static RenderContext* Active()
+		{
+			return active_;
+		}
+	private:
+		static RenderContext* active_;
+};
+\end{lstlisting}
+
+\item
+\textbf{Hex-literals} are always in \textit{lower case}, e.g. 0xff and not 0xFF.
+
+\item
+Templates use "typename" types if its meant to be used for data types (like int, float etc.).
+
+\item
+Templates use "class" types if its meant to be used for classes.
+
+\item
+\textbf{Custom exceptions} are only in the "Fork" main namespace.
+
+\item
+\textbf{Setter} or \textbf{getter} with a "Description" (e.g. "FontDescription") are named "Get/Set...Desc" and not "Get/Set...Description" to keep the name short but clear.
+
+\item
+For MS/Windows specific code, don't write "hWnd", "hFont". Instead write "windowHandle", "fontHandle" etc., i.e. use clear names and not weird Microsoft notations.
+
+\item
+Make use of the C++11 scoped enumerations:
+
+\begin{lstlisting}
+enum class MyEnum
+{
+	Entry1,
+	Entry2,
+	/* ... */
+};
+\end{lstlisting}
+
+\item
+Flags enumerations should be written like this:
+
+\begin{lstlisting}
+struct MyFlags
+{
+	typedef unsigned int DataType;
+	enum : DataType
+	{
+		Flag1 = (1 << 0),
+		Flag2 = (1 << 1),
+		/* ... */
+	};
+};
+
+MyFlags::DataType flags = MyFlags::Flag1 | MyFlags::Flag2;
+\end{lstlisting}
+
+This is due to the strong typing with the C++11's enum classes:
+
+\begin{lstlisting}
+// False example:
+enum class MyFlags
+{
+	Flag1 = (1 << 0),
+	Flag2 = (1 << 1),
+	/* ... */
+};
+
+MyFlags flags = MyFlags::Flag1 | MyFlags::Flag2; // <-- Error
+\end{lstlisting}
+
+\item
+Error messages, telling that something failed, should be written as "[Do-]ing ... failed" and not "Could not [Do]":
+
+\begin{lstlisting}
+// Usage example:
+IO::Log::Error("Loading texture \"" + filename + "\" failed");
+
+// False example:
+IO::Log::Error("Could not load texture \"" + filename + "\"");
+\end{lstlisting}
+  
+\item
+Event handler callbacks should never be implemented via function objects. Use class inheritance instead.
+
+\begin{lstlisting}
+// Example:
+class Widget
+{
+	public:
+		// This is the event handler for all "Widget" events.
+		class EventHandler
+		{
+			public:
+				virtual ~EventHandler()
+				{
+				}
+				virtual void OnResize()
+				{
+				}
+			protected:
+				EventHandler() = default;
+		};
+		
+		typedef std::shared_ptr<EventHandler> EventHandlerPtr;
+		
+		void AddEventHandler(const EventHandlerPtr& eventHandler)
+		{
+			if (eventHandler)
+				eventHandlers_.push_back(eventHandler);
+		}
+		
+	private:
+		std::vector<EventHandlerPtr> eventHandlers_;
+};
+\end{lstlisting}
+
+Only when a single small function is required, use a function object:
+
+\begin{lstlisting}
+// Example:
+class SceneNodePrinter
+{
+	public:
+		// Callback interface
+		typedef std::function<void (const std::string& text)> SimpleCallback;
+		
+		void PrintSceenNode(
+			Scene::SceneNode* sceneNode, const SimpleCallback& callback
+		);
+		
+	private:
+		SimpleCallback callback_;
+};
+
+SceneNodePrinter printer;
+
+printer.PrintSceneNode(
+	sceneNode,
+	[](const std::string& text)
+	{
+		IO::Log::Message(text)
+	}
+);
+\end{lstlisting}
+
+\item
+Never use "NULL"! Instead use "nullptr", except for handles (WinAPI); use "0" for handles, because handles are not always typedefs to pointers.
+
+\item
+Avoid too much implicit programming, e.g. the core classes like "Vector3" only have explicit constructors, when only one input parameter is used:
+
+\begin{lstlisting}
+explicit Vector2(float size);
+explicit Vector3(float size);
+explicit Vector4(float size);
+\end{lstlisting}
+
+\item
+Boolean class members should start with "is", "has", "was" etc. telling what kind of boolean this is.
+
+\begin{lstlisting}
+bool isEnabled;
+bool hasChildren;
+bool wasMovedLastFrame;
+bool acceptModifications;
+bool preventForPowerSafe;
+\end{lstlisting}
+
+\item
+In a class hierarchy, when up-casting is required, the base class should have the following function interface:
+
+\begin{lstlisting}
+class BaseClass
+{
+	public:
+		enum class Types
+		{
+			Type0,
+			Type1,
+			//...
+		};
+		virtual Types Type() const = 0;
+};
+\end{lstlisting}
+
+Each derivated class must then implement the function "Type", which returns the respective class type.
+
+Here is an example class:
+
+\begin{lstlisting}
+// Base class
+class Texture
+{
+	public:
+		enum class Types
+		{
+			Tex1D,
+			Tex2D,
+			Tex3D,
+			TexCube,
+		};
+		virtual Types Type() const = 0;
+		//...
+};
+
+// Sub class
+class Texture1D : public Texture
+{
+	public:
+		Types Type() const
+		{
+			return Types::Tex1D;
+		}
+		//...
+};
+\end{lstlisting}
+
+\item
+Special enumeration entries are written with two clasping underscores:
+
+\begin{lstlisting}
+enum ComponentTypes
+{
+	// Special entry for functions which always return an enumeration item.
+	__Unknown__,
+	
+	Asset,
+	Entity,
+	
+	// Special entry which is used to determine the number of items.
+	__Num__ = 2,
+};
+\end{lstlisting}
+
+\item
+`Enumeration entry to string' conversion functions are always \textit{static functions} and
+called \textbf{"<EnumName>ToString"} where \textit{<EnumName>} specifies the singular enumeration name, e.g.:
+
+\begin{lstlisting}
+class Entity
+{
+	enum Types
+	{
+		Model,
+		Camera,
+		Light,
+	};
+	static std::string TypeToString(const Types type);
+	
+	enum Modes
+	{
+		Editing,
+		Moving,
+	};
+	static std::string ModeToString(const Modes mode);
+};
+\end{lstlisting}
+
+\item
+\textbf{Code documentation} is written in \textit{doxygen} syntax.
+Keep the same order of documentation entries (i.e. parameters, return type, remarks, etc.):
+
+\begin{lstlisting}
+/**
+This is any function.
+\param[in] x Specifies the X coordinate.
+\param[in,out] y Specifies the Y coordinate.
+\return Raw pointer to an integer array.
+\remarks This is some additional and more detailed information.
+\note Some warning information, e.g: make sure to delete the integer pointer!
+\todo Some todo information.
+\throws InvalidArgumentException If 'x' is negative.
+\see SomeOtherFunction
+*/
+int* AnyFunction(int x, int& y);
+
+//! Single line documentation.
+void SmallFunction();
+\end{lstlisting}
+
+\item
+\textbf{Singleton} classes are implemented as follows:
+
+\begin{lstlisting}
+class SingletonExample
+{
+
+	public:
+		
+		SingletonExample(const SingletonExample&) = delete;
+		SingletonExample& operator = (const SingletonExample&) = delete;
+		
+		static SingletonExample* Instance()
+		{
+			static SingletonExample instance;
+			return &instance;
+		}
+		
+	private:
+	
+		SingletonExample() = default;
+		
+};
+\end{lstlisting}
+
+\item
+\textbf{Ranges} in documentation are written as follows:
+
+\begin{lstlisting}
+/**
+\param[in] index Range is [0 .. number-of-indices).
+\param[in] interpolator Range is [0.0 .. 1.0].
+\param[in] anyFloat Range is (-inf .. +inf).
+*/
+void ExampleFunction(size_t index, float interpolator, float anyFloat);
+\end{lstlisting}
+
+\item
+\textbf{Identification numbers} are written in short as "ID" and not "Id" or "id".
+
+\end{itemize}
+
+\end{document}

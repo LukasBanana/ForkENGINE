@@ -1,0 +1,227 @@
+
+/*
+
+Fork File-Format Core Specification
+
+--- Description ---
+
+This is the core of all ForkEd (ForkENGINE Editor) file formats: *.forkproject, *.forkscene, *.forkasset.
+
+--- History ---
+
+22/04/2014:
+	- Started to split the "Fork Scene Format" (*.fks) into several file formats.
+
+*/
+
+
+// --- Basic data types --- //
+
+typedef char				Boolean;	//!< 8-bit coded boolean.
+
+typedef char				Char;		//!< UTF-8 character (char).
+typedef wchar_t				WChar;		//!< UTF-16 character (wchar_t).
+
+typedef signed char			Int8;		//!< 8-bit signed integer (char).
+typedef unsigned char		UInt8;		//!< 8-bit unsigned integer (unsigned char).
+typedef signed short		Int16;		//!< 16-bit signed integer (short).
+typedef unsigned short		UInt16;		//!< 16-bit unsigned integer (unsigned short).
+typedef signed int			Int32;		//!< 32-bit signed integer (int).
+typedef unsigned int		UInt32;		//!< 32-bit unsigned integer (unsigned int).
+typedef signed long long	Int64;		//!< 64-bit signed integer (long long).
+typedef unsigned long long	UInt64;		//!< 64-bit unsigned integer (unsigned long long).
+
+typedef float				Float32;	//!< 32-bit floating point (float).
+typedef double				Float64;	//!< 64-bit floating point (double).
+
+
+// --- Basic structures --- //
+
+//! Sized UTF-8 string
+struct String
+{
+	UInt32	len;		//!< String length (Excluding the null termination character).
+	Char	str[len];	//!< String character array (Without null termination character).
+};
+
+//! Sized UTF-16 string.
+struct WString
+{
+	UInt32	len;		//!< String length (Excluding the null termination character).
+	WChar	str[len];	//!< String character array (Without null termination character).
+};
+
+//! 2D 32-bit float vector.
+struct Vector2f
+{
+	Float32 x, y;
+};
+
+//! 3D 32-bit float vector.
+struct Vector3f
+{
+	Float32 x, y, z;
+};
+
+//! 4D 32-bit float vector.
+struct Vector4f
+{
+	Float32 x, y, z, w;
+};
+
+//! 2D 32-bit integer vector.
+struct Vector2i
+{
+	Int32 x, y;
+};
+
+//! 3D 32-bit integer vector.
+struct Vector3i
+{
+	Int32 x, y, z;
+};
+
+//! 4D 32-bit integer vector.
+struct Vector4i
+{
+	Int32 x, y, z, w;
+};
+
+//! 2x2 32-bit float matrix.
+struct Matrix2f
+{
+	Vector2f x, y;
+};
+
+//! 3x3 32-bit float matrix.
+struct Matrix3f
+{
+	Vector3f x, y, z;
+};
+
+//! 4x4 32-bit float matrix.
+struct Matrix4f
+{
+	Vector4f x, y, z, w;
+};
+
+//! 32-bit float quaternion.
+struct Quaternion
+{
+	Float32 x, y, z, w;
+};
+
+//! 2D transformation.
+struct Transform2Df
+{
+	Vector2f	position;
+	Float32		rotation;
+	Vector2f	scale;
+};
+
+//! 3D transformation.
+struct Transform3Df
+{
+	Vector3f	position;
+	Quaternion	rotation;
+	Vector3f	scale;
+};
+
+//! Graphics viewport.
+struct Viewport
+{
+	Vector2i	position;
+	Vector2i	size;
+	Float32		minDepth;
+	Float32		maxDepth;
+};
+
+//! Graphics projection.
+struct Projection
+{
+	Viewport	viewport;
+	Float32		nearPlane;
+	Float32		farPlane;
+	Float32		fieldOfView;	//!< Field of view (FOV) in radians.
+	Boolean		isOrtho;
+};
+
+//! Chunk description.
+struct ChunkDesc
+{
+	UInt32 id;		//!< Chunk ID which describes what kind of chunk this is.
+	UInt32 offset;	//!< Offset (in bytes) where the chunk begins in the file.
+	UInt32 size;	//!< Size (in bytes) of the chunk in the file.
+};
+
+//! List of chunk descriptions.
+struct ChunkDescList
+{
+	ArrayList<ChunkDesc> chunks;
+};
+
+
+// --- Templated basic structures --- //
+
+//! Array list structure.
+template <class Entry, typename Counter = UInt32> struct ArrayList
+{
+	Counter	num;			//!< Number of list entries.
+	Entry	entries[num];	//!< Array list with 'num' entries.
+};
+
+//! Linked list structure.
+template <class Entry> struct LinkedList
+{
+	UInt32	firstEntryOffset;	//!< Offset (in bytes) to the first 'LinkedListNode' entry in the file, or 0x00000000 if the list is empty.
+};
+
+template <class Entry> struct LinkedListNode
+{
+	UInt32	nextEntryOffset;	//!< Offset (in bytes) to the next 'LinkedListNode' in the file, or 0x00000000 if no further entry exists.
+	Entry	entry;				//!< Data entry.
+};
+
+
+// --- Main structures --- //
+
+//! File header
+struct FileHeader
+{
+	/**
+	Magic number.
+	This is file format specific:
+	- ForkProject (*.forkproject) -> (*(const UInt32*)"fkpr")
+	- ForkScene (*.forkscene) -> (*(const UInt32*)"fksc")
+	- ForkAssets (*.forkassets) -> (*(const UInt32*)"fkas")
+	*/
+	UInt32 magic;
+	
+	/**
+	Version number.
+	100 for version 1.00,
+	101 for version 1.01 etc.
+	*/
+	UInt16 version;
+	
+	/**
+	Version number of the last compatible format version.
+	If one have a scene loader which supports the version 103,
+	the member "version" is 105 and the member "lastCompatibleVersion" is 102,
+	the scene loader will be able to load this scene file.
+	*/
+	UInt16 lastCompatibleVersion;
+	
+	//! General purpose format flags.
+	UInt32 flags;
+};
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+
+// ForkSCript test 1
+// 28/02/2014
+
+MessageColored("<1101>ForkSCript</> Test")
+
+include "OtherScript.fsc"
+
+var path = @"textures/"
+var n = 20
+var tex = []
+
+// There is only the simple '=' assignemnt.
+// There is NO '+=' etc.
+n = n + (n - 3)*2
+
+// Simple loop control
+for i : 1 .. n*2 {
+    tex[i] = new Texture2D(path + "tex" + i + ".jpg")
+}
+
+var fileList = { "test", "foo", "bar" }
+var indexList = { 3, -2, 42 }
+
+var mdlFile = "models/object1.3ds"
+
+var mdlObj2 = new Model("test")
+
+// Simple flow control (no concatenations with &&, || etc.)
+// '=' is ALWAYS an assignment!
+// Expressions like "n > 5" are NOT allowed.
+if not mdlObj = new Model(mdlFile) {
+    Exception("Loading model \"" + mdlFile + "\" failed!")
+} elif mdlObj2 {
+	Message("foo bar")
+} else {
+	Success("Yeah! Model loaded ;-)")
+}
+
+// 1st way to initialize an object
+var mat1 = new Material()
+
+mat1.diffuse = ColorRGBAf(1, 0.8, 1, 1)
+mat1.shininess = 0.5
+
+// 2nd way to initialize an object
+var mat2 = new Material {
+	diffuse: ColorRGBAub(200, 200, 200, 255),
+	shininess: 90.0
+}
+
+/* --- C++ side: --- */
+
+/*
+
+// ForkSCript Variable object class.
+class FSCVarObject
+{
+    enum class Types
+    {
+        Integer,
+        String,
+        List,
+        GraphicsResource, // Texture, Material, Shader etc.
+        MeshGeometry,
+    };
+};
+
+class FSCInterpreter
+{
+    template <class T> std::shared_ptr<T> Find(std::string name)
+    {
+        return std::dynamic_pointer_cast<T>(FindVar(name));
+    }
+};
+
+*/

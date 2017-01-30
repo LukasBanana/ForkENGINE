@@ -1,0 +1,70 @@
+
+/*
+
+ForkProject (*.forkproject) File-Format Specification
+
+--- Description ---
+
+The ForkProject file format is a binary format to store the entire ForkENGINE game project.
+
+This is based on the "Fork FileFormat Core Spec".
+
+--- History ---
+
+22/04/2014:
+	- Started to split the "Fork Scene Format" (*.fks) into several file formats.
+
+*/
+
+
+// --- Format overview --- //
+
+/*
+<BEGIN-OF-FILE>
+FileHeader
+ChunkDescList
+for i := 1 .. ChunkDescList.chunks.num {
+	Chunk<TYPE>
+}
+<END-OF-FILE>
+*/
+
+
+// --- Reserved chunk IDs --- //
+
+enum ChunkIDList : UInt32
+{
+	// Scenes
+	Scenes	= 0x00000001,
+};
+
+
+// --- Chunks (Scenes) --- //
+
+/**
+Chunks where all scenes are stored.
+\since Version 1.00
+*/
+struct ChunkScenes
+{
+	struct Scene
+	{
+		String relativeFilename;	//!< Relative scene filename (*.forkscene).
+	};
+	
+	LinkedList<Scene> scenes;		//!< Linked list to all scenes.
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

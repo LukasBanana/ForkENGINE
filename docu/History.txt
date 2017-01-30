@@ -1,0 +1,27 @@
+
+<----- History of the ForkENGINE ----->
+
+=== 06/10/2014 ===
+
+- State: 100.000 LoC
+- Features:
+	Engine Base
+	Editor (With Multi View, GL and D3D11 renderers)
+	Post Processors
+	Scripting
+	Physics
+	Animation Base
+	Daemon Server
+
+
+=== 19/06/2014 ===
+
+- State: 70.000 LoC
+- Features:
+	Engine Base
+	Editor (called "ForkEd")
+
+
+=== 23/02/2014 ===
+
+- Beginning with the ForkENGINE

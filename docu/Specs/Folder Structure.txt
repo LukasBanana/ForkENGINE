@@ -1,0 +1,212 @@
+
+<--- ForkENGINE folder structure --->
+
+ForkENGINE
+|_include
+| |_fengine { core.h, math.h, video.h, audio.h, network.h, scene.h, collision.h, animation.h, physics.h, io.h, platform.h }
+|   |_Core
+|   | |_Exception { RenderSystemException, NullPointerException }
+|   | |_TreeHierarchy { KDTreeNode, OcTreeNode, OBBTreeNode, QuadTreeNode }
+|   | |_Container { StrideBuffer (uses 'std::vector<char>') }
+|   |_Math
+|   | |_Core { Vector2<T>, Vector3<T>, Vector4<T>, Quaternion<T>, Matrix2x2<T>, Matrix3x3<T>, Matrix4x4<T>, Transform2D<T>, Transform3D<T>, Rect2D<T>, Size2D<T>, Size3D<T>, Angle<T>, Degree<T>, Radian<T> }
+|   | | |_Arithmetic (provides 'VectorArithmetic.h' and 'MatrixArithmetic.h')
+|   | |_Common { Polynom, Spline, StaticBezier, DynamicBezier }
+|   | |_Geometry { Polygon<T>, Triangle<T>, Plane<T>, Line<T>, Ray<T>, Sphere<T>, Cone<T>, Cylinder<T>, Capsule<T>, AABB<T>, OBB<T>, ConvexHull<T, int>, Frustum<T> }
+|   | |_Collision ('Core collision math functions')
+|   |_Video
+|   | |_Core { ColorRGB<T>, ColoRGBA<T>, Projection<T>, Viewport, VideoMode, DisplayDevice, VideoModeEnumerator }
+|   | |_Font { Font, TextureFont, FontGlyph, FontBuilder }
+|   | |_Image { Image<T, int>, ImageUByte, ImageFloat, ImageConverter }
+|   | |_Monitor { ContextDescription, RendererInfo }
+|   | |_BufferFormat { IndexFormat, VertexFormat, VertexFormatConverter, Simple2DVertex (2D Coord, 2D TexCoord), Simple3DVertex (3D Coord, Normal, 2D TexCoord), TangentSpaceVertex (std. vertex format for tangent space), CommonVertex (for general purposes) }
+|   | |_FileHandler { ImageReader, ImageWriter, ShaderReader }
+|   | |_RenderSystem { RenderContext, RenderSystem, HardwareBuffer, Query }
+|   | | |_Texture { Texture1D, Texture2D, Texture3D, TextureCube }
+|   | | |_Shader { Shader (vertex-, hull-, domain-, geometry- or pixel shader), ShaderComposition, ComputeShader, ConstantBuffer, ShaderBuffer, ShaderRWBuffer, ShaderStructBuffer, ShaderRWStructBuffer, ShaderByteAddrBuffer, ShaderRWByteAddrBuffer }
+|   | | |_HardwareBuffer { VertexBuffer, IndexBuffer (maybe later 'PixelBuffer' etc.) }
+|   | | |_RenderState { RasterizerState, BlendState, DepthStencilState, SamplerState }
+|   | |_AdvancedRenderers { AdvancedRenderer, DeferredRenderer, ForwardRenderer, PrimitiveRenderer (has functions like 'DrawRect2D', 'DrawImage2D', 'DrawButton2D' etc.) }
+|   |   |_Core { GBuffer, ShadowMapper, VPLGenerator, SparseOctreeVoxelizer, LightGrid }
+|   |   |_PostProcessor { GaussianBlur, BloomFilter, GodRays, SSAO }
+|   |_Audio
+|   | |_Core { Sound, AudioStream, Effect, Emitter }
+|   | |_FileHandler { AudioReader, AudioWriter }
+|   | |_SoundSystem { SoundSystem }
+|   |_Network
+|   | |_Core { Address, Socket, Adapter, Packet }
+|   | |_NetworkSystem { Member, Server, Client, SessionReception, SessionLogin }
+|   | |_Protocol { HTTP }
+|   |_Scene
+|   | |_Core { TreeBuilder }
+|   | |_FileHandler { ModelReader, ModelWriter }
+|   | |_Geometry { Geometry, LODGeometry, MeshGeometry, TerrainGeometry, BillboardGeometry, Simple2DMeshGeometry (uses "Video::Simple2DVertex"), Simple3DMeshGeometry, TangentSpaceMeshGeometry, CommonMeshGeometry }
+|   | | |_Generator { NormalGenerator, TangentGenerator, GeomtryGenerator }
+|   | |_LightSource { LightSource, PointLightSource, SpotLightSource, DirectionalLightSource, AreaLightSource, LineLightSource }
+|   | |_SceneManager { SceneManager, CameraController, FPSCameraController }
+|   | |_SceneGraph { SceneGraph }
+|   | |_Node { SceneVisitor, SceneNode, GeometryNode, LightNode, CameraNode, AudioNode, SceneNodeSorter }
+|   |_Collision
+|   | |_Node { CollisionNode, CollisionGeometry (uses 'Scene.Geometry'), CollisionPrimitive (uses 'Math.Collision') }
+|   | |_Response { CollisionSystem }
+|   |_Animation
+|   | |_Core { Animation, Playback, KeyframeSequence }
+|   | |_AnimationSystem
+|   | | |_Common { NodeAnimation, MorphTargetAnimation }
+|   | | |_SkeletalAnimation { SkeletalAnimation, Skeleton, Joint, JointGroup }
+|   | |_ParticalSystem { ParticleGroup, ParticleEmitter, ParticleAnimation }
+|   |_Physics { PhysicsSystem, World }
+|   | |_Body { RigidBody, SoftBody }
+|   | |_Joint { BallJoint, HingJoint, SliderJoint, UniversalJoint }
+|   | |_Kinematic { CharacterController }
+|   |_Utility
+|   | |_Terminal { Terminal (uses 'CommandExecutor' and 'TerminalRenderer'), TerminalView, TerminalModel, CommandExecutor }
+|   | |_Selector { Selector, SelectorView, SelectorModel }
+|   | |_Projector { Projector, ProjectorView, ProjectorModel }
+|   |_IO
+|   | |_Core { Console, Log (uses 'Console'), Error }
+|   | |_FileSystem { File, PhysicalFile }
+|   | |_InputDevice { Keyboard, Mouse, Joystick, GamePad }
+|   |_Lang { FSCInterpreter, XMLParser }
+|   | |_SyntaxAnalyzer { Token, Scanner, Parser }
+|   | |_AbstractSyntaxTrees { AST }
+|   | | |_Literal { StringLiteral, IntegerLiteral, FloatLiteral, BoolLiteral }
+|   | | |_XML { XMLTag, XMLAttribute, XMLContent }
+|   | |_FSCInterpreter { FSCInterpreter, FSCScanner }
+|   |   |_IMR { VarObject, LoopCommand }
+|   |_Platform { SystemInfo, ConsoleManip, Frame, DynamicLibrary, Desktop }
+|   |_Engine { EngineInfo, EngineDevice (holds all main devices), SceneRenderer (SceneGraph is the 'model', RenderSystem is the 'view' and SceneRenderer is the 'controller') }
+|   |_GUI
+|     |_Core {  }
+|     |_ViewController { ViewController, Button, CheckBox, TextField, Label, ComboBox, ListView, TreeView }
+|     |_Dialog { MessageDialog, FileExplorerDialog, DirectoryExplorerDialog }
+|_sources
+  |_fengine
+    |_Core
+	| |_TreeHierarchy { KDTreeNode, OcTreeNode, OBBTreeNode, QuadTreeNode }
+	| |_Container { StrideBuffer (uses 'std::vector<char>') }
+    |_Math
+    |_Video
+    | |_Core { VideoMode, DisplayDevice, VideoModeEnumerator }
+    | |_Font { Font, TextureFont, FontGlyph, FontBuilder }
+    | |_Image { ImageUByte, ImageFloat, ImageConverter }
+    | |_Monitor
+    | |_BufferFormat { IndexFormat, VertexFormat, VertexFormatConverter, Simple2DVertex (2D Coord, 2D TexCoord), Simple3DVertex (3D Coord, Normal, 2D TexCoord), TangentSpaceVertex (std. vertex format for tangent space), CommonVertex (for general purposes) }
+    | |_FileHandler { ImageReader, ImageWriter, ShaderReader, STBImageReader (using STBI lib), BMPImageWriter, JPEGImageReader, JPEGImageWriter }
+    | |_RenderSystem { RenderContext, RenderSystem, HardwareBuffer, Query }
+    | | |_Texture { Texture1D, Texture2D, Texture3D, TextureCube }
+    | | |_Shader { Shader (vertex-, hull-, domain-, geometry- or pixel shader), ShaderComposition, ComputeShader, ConstantBuffer, ShaderBuffer, ShaderRWBuffer, ShaderStructBuffer, ShaderRWStructBuffer, ShaderByteAddrBuffer, ShaderRWByteAddrBuffer }
+    | | |_HardwareBuffer { VertexBuffer, IndexBuffer }
+    | | |_RenderState { RasterizerState, BlendState, DepthStencilState, SamplerState }
+	| | |_HWRenderer
+    | |   |_OpenGL { GLRenderContext, GLRenderSystem, GLHardwareBuffer, GLQuery }
+    | |   | |_Texture { GLTexture1D, ... }
+    | |   | |_Shader { GLVertexShader, ... }
+    | |   | |_MeshBuffer { GLVertexBuffer, GLIndexBuffer }
+    | |   | |_RenderState { GLRasterizerState, GLBlendState, GLDepthStencilState }
+    | |   |_Direct3D11 { D3D11RenderContext, D3D11RenderSystem, D3D11HardwareBuffer, D3D11Query }
+    | |     |_Texture { D3D11Texture1D, ... }
+    | |     |_Shader { D3D11VertexShader, ... }
+    | |     |_MeshBuffer { D3D11VertexBuffer, D3D11IndexBuffer }
+    | |     |_RenderState { D3D11RasterizerState, D3D11BlendState, D3D11DepthStencilState }
+    | |_AdvancedRenderers { AdvancedRenderer, DeferredRenderer, ForwardRenderer, PrimitiveRenderer (has functions like 'DrawRect2D', 'DrawImage2D', 'DrawButton2D' etc.) }
+    |   |_Core { GBuffer, ShadowMapper, VPLGenerator, SparseOctreeVoxelizer, LightGrid }
+    |   |_PostProcessor { GaussianBlur, BloomFilter, GodRays, SSAO }
+    |_Audio
+    | |_Core { Sound, AudioStream, Effect, Emitter }
+    | |_FileHandler { AudioReader, AudioWriter }
+    | | |_FileReader { WAVReader, OGGReader }
+    | | |_FileWriter { WAVWriter }
+    | |_SoundSystem { SoundSystem }
+    |   |_OpenAL { ALSoundSystem, ALSound, ALAudioStream, ALEffect, ALBuffer, ALSource }
+    |   |_XAudio2 { XA2SoundSystem, XA2Sound, XA2AudioStream, XA2Effect }
+    |_Network
+    | |_Core { Address, Socket, Adapter, Packet }
+    | |_NetworkSystem { Member, Server, Client, SessionReception, SessionLogin }
+    | |_Protocol { HTTP }
+    |_Scene
+	| |_Core { TreeBuilder }
+	| |_FileHandler { ModelReader, ModelWriter }
+	| | |_FileReader { FMDReader, MS3DReader, XReader, A3DSReader (as for 'Autodesk 3DS') }
+	| | |_FileWriter { FMDWriter }
+    | |_Geometry { Geometry, LODGeometry, MeshGeometry, TerrainGeometry, BillboardGeometry }
+	| | |_Generator { NormalGenerator, TangentGenerator, CubeGeomtryGenerator, ConeGeomtryGenerator, CylinderGeometryGenerator, UVSphereGeometryGenerator, IcoSphereGeometryGenerator, TorusGeometryGenerator, SpiralGeometryGenerator, CapsuleGeometryGenerator }
+    | |_LightSource { LightSource, PointLightSource, SpotLightSource, DirectionalLightSource, AreaLightSource, LineLightSource }
+	| |_SceneManager { SceneManager }
+	| | |_Common { CommonSceneManager }
+	| | |_Stream { StreamSceneManager }
+	| |_SceneGraph { SceneGraph }
+	| | |_Common { ForwardSceneGraph }
+	| | |_PortalSceneGraph { PortalSceneGraph, Portal, Sector }
+    | |_Node { SceneNode, GeometryNode, LightNode, CameraNode, AudioNode, SceneNodeSorter }
+    |_Collision
+    | |_Node { CollisionNode, CollisionGeometry (uses 'Scene.Geometry'), CollisionPrimitive (uses 'Math.Collision') }
+    | |_Response { CollisionSystem }
+	|_Animation
+	| |_Core { Animation, Playback, KeyframeSequence }
+	| |_AnimationSystem
+	| | |_Common { NodeAnimation, MorphTargetAnimation }
+	| | |_SkeletalAnimation { SkeletalAnimation, Skeleton, Joint, JointGroup }
+	| |_ParticalSystem { ParticleGroup, ParticleEmitter, ParticleAnimation }
+    |_Physics { PhysicsSystem, World }
+    | |_Body { RigidBody, SoftBody }
+    | |_Joint { BallJoint, HingJoint, SliderJoint, UniversalJoint }
+    | |_Kinematic { CharacterController }
+    | |_Engine
+    |   |_Newton { NwPhysicsSystem, NwWorld }
+    |     |_Body { NwRigidBody, NwSoftBody }
+    |     |_Joint { NwBallJoint, NwHingJoint, NwSliderJoint, NwUniversalJoint }
+    |     |_Kinematic { NwCharacterController }
+    |_Utility
+    | |_Terminal { Terminal (uses 'CommandExecutor' and 'TerminalRenderer'), TerminalView, TerminalModel, CommandExecutor }
+    | |_Selector { Selector, SelectorView, SelectorModel }
+    | |_Projector { Projector, ProjectorView, ProjectorModel }
+    |_IO
+    | |_Core { Console, Log (uses 'Console') }
+    | |_FileSystem { PhysicalFile }
+    | |_InputDevice { Keyboard, Mouse, Joystick, GamePad }
+    |_Lang { FSCInterpreter, XParser (for 'XReader'), XMLParser }
+    | |_SyntaxAnalyzer { Token, Scanner, Parser }
+    | |_AbstractSyntaxTrees { AST }
+    | | |_Literal { StringLiteral, IntegerLiteral, FloatLiteral, BoolLiteral }
+    | | |_XML { XMLTag, XMLAttribute, XMLContent }
+	| |_FSCInterpreter { FSCInterpreter, FSCScanner, VarObject }
+	|   |_IMR { LoopCommand }
+	|_Plugins
+	| |_STB { STBImageReader }
+    |_Platform
+    | |_Windows { SystemInfo, ConsoleManip, Frame, DynamicLibrary, Desktop }
+    | |_Posix { --- "" --- }
+    | |_OSX { --- "" --- }
+    |_Engine { EngineInfo, EngineDevice (holds all main devices), SceneRenderer }
+    |_Editor { EditorMain }
+      |_Core
+      |_UIExtensions { UIComboBox, UIPropertyGrid, etc. }
+      |_Entity { Model, Camera, Billboard, Trigger }
+      |_Frame { EditorFrame }
+      | |_Main { MainFrame }
+      | |_Config { ConfigFrame }
+      |_Tools
+        |_AssetBrowser { AssetBrowser, AssetBrowserView, AssetBrowserModel }
+
+
+<--- Library overview --->
+
+ForkENGINE			Main library (Engine Device etc., connects all sub-libraries, provides high-level render systems: "SceneRenderer")
+ForkCore			Core library (Core, Math, IO, Lang::Core, Video::Core, Video::Image, Platform)
+ForkScript			Scripting language library (Lang::Script)
+ForkScene			Scene management library (Scene)
+ForkAnimation		Animation library (Animation)
+ForkRenderer		Render system library (Video)
+ForkRendererGL4		OpenGL 4 render system library (Video/RenderSystem/HWRenderer/OpenGL4)
+ForkRendererD3D11	Direct3D 11 render system library (Video/RenderSystem/HWRenderer/Direct3D11)
+ForkNetwork			Network library (Network)
+ForkUtility			Utility library (Utility)
+ForkAudio			Audio library (Audio)
+ForkPhysics			Physics and collision library (interface) (Physics, Collision)
+ForkPhysicsNw		Newton physics and collision library (implementation)
+
+ForkEd				ForkENGINE world editor.
+
+
+

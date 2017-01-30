@@ -1,0 +1,22 @@
+
+#version 330
+
+in vec3 coord;
+in vec3 normal;
+in vec2 texCoord;
+
+out vec3 vertexNormal;
+out vec2 vertexTexCoord;
+
+layout(std140) uniform vertexParam
+{
+    mat4 wvpMatrix;
+	mat4 worldMatrix;
+};
+
+void main()
+{
+    gl_Position = wvpMatrix * vec4(coord, 1.0);
+	vertexNormal = mat3(worldMatrix) * normal;
+	vertexTexCoord = texCoord;
+}

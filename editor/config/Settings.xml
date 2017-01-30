@@ -1,0 +1,9 @@
+
+<!-- ForkENGINE Editor Settings -->
+
+<settings>
+	<renderer module="ForkRendererGL"/>
+	<anti_aliasing enabled="true" samples="8"/>
+	<language module="ForkEdLanguageEN"/>
+	<terminal bg="0 0 0.2 1"/>
+</settings>

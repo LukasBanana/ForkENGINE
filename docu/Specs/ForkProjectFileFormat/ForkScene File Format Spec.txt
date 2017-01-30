@@ -1,0 +1,190 @@
+
+/*
+
+ForkScene (*.forkscene) File-Format Specification
+
+--- Description ---
+
+The ForkScene file format is a binary format to store 3D scenes for the ForkENGINE.
+
+This is based on the "Fork FileFormat Core Spec".
+
+--- History ---
+
+31/03/2014:
+	- Beginning with version 1.00.
+
+22/04/2014:
+	- Redesigned version 1.00.
+
+*/
+
+
+// !TODO! -> REDESIGN (To be used with several scenes and a main project file).
+
+
+// --- Format overview --- //
+
+/*
+<BEGIN-OF-FILE>
+FileHeader
+ChunkDescList
+for i := 1 .. ChunkDescList.chunks.num {
+	Chunk<TYPE>
+}
+<END-OF-FILE>
+*/
+
+
+// --- Reserved chunk IDs --- //
+
+enum ChunkIDList : UInt32
+{
+	// Configurations
+	Projections			= 0x00000001,
+	
+	// Resources
+	DynamicImages		= 0x00000010,
+	StaticImages		= 0x00000011,
+	DynamicModels		= 0x00000012,
+	StaticModels		= 0x00000013,
+	
+	// Scene nodes
+	CameraSceneNodes	= 0x00000100,
+	
+	// Graphics objects
+	BlendStates			= 0x00001000,
+	RasterizerStates	= 0x00001001,
+	DepthStencilStates	= 0x00001002,
+	Textures			= 0x00001003,
+	Shaders				= 0x00001004,
+	ShaderCompositions	= 0x00001005,
+};
+
+
+// --- Chunks (Configurations) --- //
+
+/**
+Chunks where all projections are stored.
+\since Version 1.00
+*/
+struct ChunkProjections
+{
+	ArrayList<Projection, UInt8> projections;
+};
+
+
+// --- Chunks (Resources) --- //
+
+/**
+Chunks where all dynamic images are stored.
+Dynamic images will be loaded from file.
+\since Version 1.00
+*/
+struct ChunkDynamicImages
+{
+	//! Dynamic image structure.
+	struct DynamicImage
+	{
+		//! Image flags.
+		enum Flags : UInt32
+		{
+			None			= 0,
+			ConvertToUByte	= (1 << 0),	//!< Convert image to a UByte image.
+			ConvertToFloat	= (1 << 1),	//!< Convert image to a Float image.
+		};
+		
+		UInt32 flags;					//!< Image flags.
+		String relativeFilename;		//!< Relative filename of the image file.
+	};
+	
+	LinkedList<DynamicImage> images;	//!< Linked list to the image data.
+};
+
+/**
+Chunks where all static images are stored.
+Static images are stored inside the scene file.
+\since Version 1.00
+*/
+struct ChunkStaticImages
+{
+	//! Static image structure.
+	struct StaticImage
+	{
+		//! Image data types.
+		enum ImageTypes : UInt8
+		{
+			UByte = 0,
+			Float = 1,
+		};
+		
+		UInt8		type;										//!< Image data type.
+		Vector2i	size;										//!< Image size.
+		
+		UInt8		numComponents;								//!< Number of color components per pixel. Must be 1, 2, 3 or 4.
+		
+		if (type == ImageTypes::UByte)
+			UInt8 imageData[size.x * size.y * numComponents];	//!< Image data.
+		else
+			Float32 imageData[size.x * size.y * numComponents];	//!< Image data.
+	};
+	
+	LinkedList<DynamicImage> images;	//!< Linked list to the image data.
+};
+
+/**
+Chunks where all dynamic models are stored.
+Dynamic models will be loaded from file.
+\since Version 1.00
+*/
+struct ChunkDynamicModels
+{
+	//! Dynamic model structure.
+	struct DynamicModel
+	{
+		//! Model flags.
+		enum Flags : UInt32
+		{
+			None				= 0,
+			CalcNormals			= (1 << 0),
+			CalcTangentSpace	= (1 << 1),
+		};
+		
+		UInt32 flags;					//!< Model flags.
+		String relativeFilename;		//!< Relative filename of the model file.
+	};
+	
+	LinkedList<DynamicModel> models;	//!< Linked list to the model data.
+};
+
+
+// --- Chunks (Scene nodes) --- //
+
+/**
+Chunks where all camera scene nodes are stored.
+\since Version 1.00
+*/
+struct ChunkCameraSceneNodes
+{
+	//! Camera scene node structure.
+	struct CameraSceneNode
+	{
+		Transform3Df	transform;
+		UInt8			projectionIndex;
+	};
+	
+	LinkedList<CameraSceneNode> cameras;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+\documentclass{article}
+\title{ForkENGINE Scene Rendering}
+\author{Lukas Hermanns}
+\date{April 2014}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pxfonts}
+\usepackage{geometry}
+\usepackage{Qtree}
+
+\geometry{
+	a4paper,
+	top=20mm,
+	bottom=20mm
+}
+
+\begin{document}
+
+\definecolor{brightBlueColor}{rgb}{0.5, 0.5, 1.0}
+\definecolor{darkBlueColor}{rgb}{0.0, 0.0, 0.5}
+
+\lstset{
+	language = C++,
+	basicstyle = \footnotesize\ttfamily,
+	commentstyle = \itshape\color{brightBlueColor},
+	keywordstyle = \bfseries\color{darkBlueColor},
+	stringstyle = \color{red},
+	frame = single,
+	tabsize = 2
+}
+
+\maketitle
+
+\section{Scene Nodes}
+First of all, here is an overview of the basic scene node classes:
+\\\\
+
+\Tree [.\bf{SceneNode} [.\bf{LightNode} lightSource ] [.\bf{GeometryNode} geometry shader ] [.\bf{CameraNode} projection ] ]
+\\\\
+
+\Tree [.\bf{LightSource} \bf{PointLightSource} [.\bf{SpotLightSource} spotCone ] [.\bf{DirectionalLightSource} direction ] ]
+\\\\
+
+%\Tree [.\bf{Geometry} [.\bf{CompositionGeometry} subGeometries ] [.\bf{LODGeometry} lodGeometries ] [.\bf{TexturedGeometry} textures actualGeometry ] [.\bf{MeshGeometry} vertexBuffer indexBuffer primitiveType [.\bf{BaseMeshGeometry} vertices indices \bf{CommonMeshGeometry} \bf{Simple2DMeshGeometry} \bf{Simple3DMeshGeometry} \bf{TangetSpaceMeshGeometry} ] ] \bf{BillboardGeometry} ]
+
+\Tree
+[.\bf{Geometry}
+	\bf{CompositionGeometry}
+	\bf{LODGeometry}
+	\bf{TexturedGeometry}
+	[.\bf{MeshGeometry}
+		[.\bf{BaseMeshGeometry}
+			\bf{CommonMeshGeometry}
+			%\bf{Simple2DMeshGeometry}
+			%\bf{Simple3DMeshGeometry}
+			%\bf{TangetSpaceMeshGeometry}
+		]
+	]
+	%\bf{BillboardGeometry}
+]
+
+\end{document}

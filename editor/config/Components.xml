@@ -1,0 +1,88 @@
+
+<!--
+ForkEd Components XML file
+17/06/2014
+-->
+
+<!--
+Create new component class.
+@key: Specifies the hash key for the component class hash-map.
+@label: Specifies the component label which is visible in the component view list.
+Each label can refer to a language specific string with the following syntax:
+"Non Language Specific string",
+"@language_specific_string".
+@prefix: Specifies the property prefix name. This must be a unique name.
+-->
+<component key="mesh_geometry" label="Mesh Geometry" prefix="comp_mesh_geometry">
+	<!--
+	Item list for enumeration properties.
+	-->
+	<item_list key="test_list0">
+		<item value="@entry0"/>
+		<item value="@entry1"/>
+		<item value="@entry2"/>
+	</item_list>
+	
+	<!--
+	Adds a new property to the component.
+	@key: Specifies the property key. This will be used to access
+	the property in the respective C++ component class.
+	@label: Specifies the property label (here a language specific string).
+	@type: Specifies the property type. Valid values are:
+	- "bool"
+	- "float"
+	- "int"
+	- "uint"
+	- "range"
+	- "color_rgb"
+	- "color_rgba"
+	- "system_color"
+	- "enum"
+	- "string"
+	- "string_long"
+	- "string_array"
+	- "file"
+	- "dir"
+	- "vector3"
+	- "vector4"
+	@enabled: Specifies whether this property is enabled or disabled. By default true.
+	@value: Specifies the initial property value.
+	- For "bool" this must be "true" or "false". By default false.
+	- For "enum" this must be the key to a previously defined item_list.
+	- For "color_rgb" this must be in the format "r g b" (e.g. "1 1 0").
+	- For "color_rgba" this must be in the format "r g b a" (e.g. "0.7 0.5 0 1").
+	- For "vector3" this must be in the format "x y z" (e.g. "3.5 4 -3.14").
+	- For "vector4" this must be in the format "x y z w" (e.g. "3.5 4 -3.14 1").
+	@min: Specifies the minmal value for a "range" property.
+	@max: Specifies the maximal value for a "range" property.
+	-->
+	<property
+		key="file"
+		label="@filename"
+		type="file"
+		enabled="true"
+		value="< empty >"
+		
+		<!-- For "string", "string_long", "string_array", "file" and "dir" properties only -->
+		hint="Enter filename here"
+		
+		<!-- For "range" property only -->
+		min="5"
+		max="10"
+		has_spin="true"
+	/>
+	
+	<!--
+	Adds a new sub-category.
+	@key: Specifies the category property key.
+	@label: Specifies the category label.
+	-->
+	<category key="category0" label="Test Category">
+		<property key="test_prop_0" label="Foo Bar" type="string"/>
+		<category key="category1" label="Sub Category">
+			<property key="test_prop_1" label="Foo Bar 2" type="int" value="5"/>
+		</category>
+	</category>
+</component>
+
+

@@ -1,0 +1,76 @@
+
+<--- ForkENGINE class inheritance concept --->
+
+SceneNode
+|_LightNode (lightSource : LightSource)
+|_GeometryNode (geometry : Geometry, shader : ShaderComposition)
+|_CameraNode (projection : Projection)
+
+LightSource
+|_PointLightSource
+|_SpotLightSource (spotCone : LightCone)
+|_DirectionalLightSource (direction : Vector3)
+
+Geometry
+|_CompositionGeometry (subGeometries : List<Geometry>)
+|_LODGeometry (lodGeometries : List<Geometry>)
+|_TexturedGeometry (textures : List<Texture>, actualGeometry : Geometry)
+|_MeshGeometry (vertexBuffer : VertexBuffer, indexBuffer : IndexBuffer, primitiveType : GeometryPrimitives)
+| |_BaseMeshGeometry<Vertex, Index> (vertices : List<Vertex>, indices : List<Index>)
+|   |_CommonMeshGeometry
+|   |_Simple2DMeshGeometry
+|   |_Simple3DMeshGeometry
+|   |_TangetSpaceMeshGeometry
+|_BillboardGeometry (texture : Texture)
+
+/*
+Example for textured mesh geometry:
+
+GeometryNode
+  -> geometry = CompositionGeometry
+    -> subGeometries[0] = TexturedGeometry
+      -> actualGeometry = Simple3DMeshGeometry
+    -> subGeometries[1] = TexturedGeometry
+      -> actualGeometry = Simple3DMeshGeometry
+
+*/
+
+Texture
+|_Texture1D
+|_Texture2D
+|_Texture3D
+|_...
+
+ConstantBuffer
+|_GLConstantBuffer
+|_D3D11ConstantBuffer
+
+ShaderComposition (shaders : List<Shader>, constBuffers : List<ConstantBuffer>)
+|_GLShaderComposition
+|_D3D11ShaderComposition
+
+Shader
+|_VertexShader
+| |_GLVertexShader
+| |_D3D11VertexShader (inputLayout : D3D11InputLayout)
+|_PixelShader
+| |_GLPixelShader
+| |_D3D11PixelShader
+|_GeometryShader
+| |_GLGeometryShader
+| |_D3D11GeometryShader
+|_TessControlShader
+| |_GLTessControlShader
+| |_D3D11TessControlShader
+|_TessEvaluationShader
+| |_GLTessEvaluationShader
+| |_D3D11TessEvaluationShader
+|_ComputeShader
+  |_GLComputeShader
+  |_D3D11ComputeShader
+
+PrimitiveRenderer { BeginDrawing, EndDrawing, DrawPoint, DrawLine, DrawRect, Setup2DProjection, Setup3DProjection }
+AdvancedRenderer
+|_DeferredRenderer { DrawScene(sceneGraph : SceneGraph) }
+|_ForwardRenderer { DrawScene(sceneGraph : SceneGraph) }
+

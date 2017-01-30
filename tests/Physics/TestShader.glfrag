@@ -1,0 +1,14 @@
+
+#version 330
+
+in vec3 vertexNormal;
+in vec4 vertexColor;
+
+out vec4 fragColor;
+
+void main()
+{
+	vec3 lightDir = normalize(vec3(0.35, -0.5, 1));
+	float NdotL = max(0.2, -dot(normalize(vertexNormal), lightDir));
+    fragColor = vertexColor * vec4(vec3(NdotL), 1.0);
+}

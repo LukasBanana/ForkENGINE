@@ -1,0 +1,52 @@
+
+<!-- ForkENGINE Editor Color Schemes -->
+
+<color_scheme name="Default">
+    <color name="lineColor" gray="200"/>
+    <color name="captionColor" gray="187"/>
+    <color name="gradientColor" gray="213"/>
+    <color name="sashColor" gray="220"/>
+	
+    <color name="cellBgColor" gray="255"/>
+    <color name="captionBgColor" gray="200"/>
+    <color name="disabledTextColor" gray="128"/>
+    <color name="selectionBgColor" red="51" green="153" blue="255"/>
+    <color name="selectionTextColor" gray="255"/>
+    <color name="captionTextColor" gray="128"/>
+    <color name="cellTextColor" gray="0"/>
+</color_scheme>
+
+<color_scheme name="Dark">
+    <color name="lineColor" gray="50"/>
+    <color name="captionColor" gray="50"/>
+    <color name="gradientColor" gray="100"/>
+    <color name="sashColor" gray="50"/>
+	
+    <color name="cellBgColor" gray="50"/>
+    <color name="captionBgColor" gray="80"/>
+    <color name="disabledTextColor" gray="120"/>
+    <color name="selectionBgColor" gray="150"/>
+    <color name="selectionTextColor" gray="0"/>
+    <color name="captionTextColor" gray="200"/>
+    <color name="cellTextColor" gray="200"/>
+</color_scheme>
+
+<!--
+
+<color_scheme name="TEST Lol :-D">
+    <color name="lineColor" gray="200"/>
+    <color name="captionColor" red="255" green="0" blue="0"/>
+    <color name="gradientColor" red="0" green="0" blue="255"/>
+    <color name="sashColor" gray="220"/>
+	
+    <color name="cellBgColor" red="255" green="255" blue="0"/>
+    <color name="captionBgColor" gray="200"/>
+    <color name="disabledTextColor" gray="128"/>
+    <color name="selectionBgColor" red="255" green="0" blue="255"/>
+    <color name="selectionTextColor" gray="255"/>
+    <color name="captionTextColor" gray="128"/>
+    <color name="cellTextColor" gray="0"/>
+</color_scheme>
+
+-->
+

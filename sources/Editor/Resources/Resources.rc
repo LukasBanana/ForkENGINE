@@ -1,0 +1,69 @@
+
+// --- Bitmaps/ PNGs Main Menu --- //
+
+PngSettings                 RCDATA "Settings-16.png"
+
+
+// --- Bitmaps/ PNGs Toolbar 'Transform' --- //
+
+PngTransformTranslate       RCDATA "TransformTranslate.png"
+PngTransformTranslate32     RCDATA "TransformTranslate32.png"
+PngTransformRotate          RCDATA "TransformRotate.png"
+PngTransformRotate32        RCDATA "TransformRotate32.png"
+PngTransformScale           RCDATA "TransformScale.png"
+PngTransformScale32         RCDATA "TransformScale32.png"
+
+PngOrientationGlobal        RCDATA "OrientationGlobal.png"
+PngOrientationLocal         RCDATA "OrientationLocal.png"
+PngOrientationView          RCDATA "OrientationView.png"
+
+PngPivotMedianPoint         RCDATA "PivotMedianPoint.png"
+PngPivotIndividualOrigins   RCDATA "PivotIndividualOrigins.png"
+PngPivotActiveElement       RCDATA "PivotActiveElement.png"
+PngPivotBoundingBox         RCDATA "PivotBoundingBox.png"
+PngPivotMinimum             RCDATA "PivotMinimum.png"
+PngPivotMaximum             RCDATA "PivotMaximum.png"
+PngPivotGlobalCursor        RCDATA "PivotGlobalCursor.png"
+
+PngAxisX                    RCDATA "AxisX.png"
+PngAxisY                    RCDATA "AxisY.png"
+PngAxisZ                    RCDATA "AxisZ.png"
+
+PngTransformPinCamera       RCDATA "TransformPinCamera.png"
+
+PngTransformNoRaster        RCDATA "TransformNoRaster.png"
+PngTransformRelativeRaster  RCDATA "TransformRelativeRaster.png"
+PngTransformAbsoluteRaster  RCDATA "TransformAbsoluteRaster.png"
+
+BmpSelectorShow             BITMAP "SelectorShow.bmp"
+PngSelectionEnable          RCDATA "SelectionEnable.png"
+
+
+// --- Bitmaps/ PNGs Toolbar 'View' --- //
+
+PngRenderModeShaded         RCDATA "RenderModeShaded.png"
+PngRenderModeSolid          RCDATA "RenderModeSolid.png"
+PngRenderModeWireframe      RCDATA "RenderModeWireframe.png"
+PngRenderModeBoundingBox    RCDATA "RenderModeBoundingBox.png"
+
+BmpViewEditorViews          BITMAP "ViewEditorViews.bmp"
+
+
+// --- Icons --- //
+
+IcoForkEdLogo               ICON "ForkEd.Logo.ico"
+
+
+// --- Cursors --- //
+
+/*WXCURSOR_HAND           CURSOR DISCARDABLE "wx/msw/hand.cur"
+WXCURSOR_BULLSEYE       CURSOR DISCARDABLE "wx/msw/bullseye.cur"
+WXCURSOR_PENCIL         CURSOR DISCARDABLE "wx/msw/pencil.cur"
+WXCURSOR_MAGNIFIER      CURSOR DISCARDABLE "wx/msw/magnif1.cur"
+WXCURSOR_ROLLER         CURSOR DISCARDABLE "wx/msw/roller.cur"
+WXCURSOR_PBRUSH         CURSOR DISCARDABLE "wx/msw/pbrush.cur"
+WXCURSOR_PLEFT          CURSOR DISCARDABLE "wx/msw/pntleft.cur"
+WXCURSOR_PRIGHT         CURSOR DISCARDABLE "wx/msw/pntright.cur"
+WXCURSOR_BLANK          CURSOR DISCARDABLE "wx/msw/blank.cur"
+WXCURSOR_RIGHT_ARROW    CURSOR DISCARDABLE "wx/msw/rightarr.cur"
+WXCURSOR_CROSS          CURSOR DISCARDABLE "wx/msw/cross.cur"*/

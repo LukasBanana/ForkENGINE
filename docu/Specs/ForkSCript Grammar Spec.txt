@@ -1,0 +1,87 @@
+
+<--- ForkSCript Grammar Specification --->
+<-------------- 28/02/2014 -------------->
+
+(Start Symbol is 'Script')
+
+<--- Commentaries --->
+// Single-line comment
+
+/*
+Multi-line comment
+*/
+
+Script				::= StatementList
+
+<--- Numbers and Identifiers --->
+Letter				::= 'a' - 'z' | 'A' - 'Z'
+Digit				::= '0' - '9'
+
+DecNumber			::= ( Digit )+
+HexNumber			::= '0x' ( Digit | 'a' - 'f' )+
+OctNumber			::= '0c' ( '0' - '7' )+
+BinNumber			::= '0b' ( '0' | '1' )+
+
+IntegralNumber		::= DecNumber | HexNumber | OctNumber | BinNumber
+RealNumber			::= ( Digit )+ '.' ( Digit) +
+
+<--- Lists --->
+StatementList		::= ( SingleStatement )*
+SingleStatement		::= StructNameStmnt |
+						VarDeclStmnt |
+						IncludeStmnt |
+						ForStmnt |
+						IfStmnt
+
+ArgumentList		::= '(' ( epsilon | SingleArgument ( ',' SingleArgument )* ) ')'
+SingleArgument		::= Expression
+
+InitializerList		::= '{' ( epsilon | SingleInitializer ( ',' SingleInitializer )* ) '}'
+SingleInitializer	::= Identifier ':' Expression
+
+ArrayEntryList		::= '{' SingleArrayEntry ( ',' SingleArrayEntry )* '}'
+SingleArrayEntry	::= Expression
+
+ArrayAccessList		::= ( SingleArrayAccess )*
+SingleArrayAccess	::= '[' Expression ']'
+
+<--- Statements --->
+StructNameStmnt		::= StructNameIdent ( ArgumentList | Assignment )
+VarDeclStmnt		::= 'var' Identifier ( epsilon | Assignment )
+IncludeStmnt		::= 'include' StringLiteral
+ForStmnt			::= 'for' Identifier ':' Expression '..' Expression BlockStmnt
+IfStmnt				::= 'if' Expression BlockStmnt ( epsilon | ElIfStmnt | ElseStmnt )
+ElIfStmnt			::= 'elif' Expression BlockStmnt ( epsilon | ElIfStmnt | ElseStmnt )
+ElseStmnt			::= 'else' BlockStmnt
+BlockStmnt			::= '{' StatementList '}'
+
+<--- Expressions --->
+Expression			::= SumExpr
+SumExpr				::= ProductExpr ( epsilon | ( '+' | '-' ) SumExpr )
+ProductExpr			::= ValueExpr ( epsilon | ( '*' | '/' | '%' ) ProductExpr )
+ValueExpr			::= LiteralExpr | StructNameExpr | BracketExpr | NegationExpr
+StructNameExpr		::= StructNameIdent ( epsilon | ArgumentList | Assignment )
+NegationExpr		::= ( '-' | 'not' ) ValueExpr
+BracketExpr			::= '(' Expression ')'
+LiteralExpr			::= IntegerLiteral | FloatLiteral | StringLiteral
+
+<--- Literals --->
+IntegerLiteral		::= IntegralNumber
+FloatLiteral		::= RealNumber
+StringLiteral		::= ( '@"' <verbatim string literals> '"' | '"' <ANSI-C string literals> '"' )
+
+<--- Assignemnts --->
+Assignment			::= '=' ( NullListAsmnt | ListAsmnt | AllocAsmnt | ExpressionAsmnt )
+NullListAsmnt		::= '[]'
+ListAsmnt			::= ArrayEntryList
+AllocAsmnt			::= 'new' ObjectAllocation
+ExpressionAsmnt		::= Expression
+
+<--- Others --->
+Identifier			::= ( '_' | Letter ) ( '_' | Letter | Digit )*
+StructNameIdent		::= Identifier ( epsilon | ArrayAccessList ) ( epsilon | '.' StructNameIdent )
+ObjectAllocation	::= Identifier ( ArgumentList | InitializerList )
+
+
+
+

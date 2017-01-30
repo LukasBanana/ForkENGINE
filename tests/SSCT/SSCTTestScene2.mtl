@@ -1,0 +1,71 @@
+# Blender MTL File: 'SSCTTestScene2.blend'
+# Material Count: 7
+
+newmtl None_CeilingWood1.jpg
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd CeilingWood1.jpg
+#map_bump CeilingWood1_NORM.png
+
+newmtl None_Bricks4.jpg
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd Bricks4.jpg
+map_bump Bricks4_NORM.png
+
+newmtl None_NONE
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+
+newmtl None
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd StonesColorMap.jpg
+map_bump StonesNormalMap.jpg
+
+newmtl None_TilesColorMap.jpg
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd TilesColorMap.jpg
+map_Ks white.png
+map_bump TilesNormalMap.jpg
+
+newmtl None_WoodFloor1.jpg
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd WoodFloor1.jpg
+#map_bump WoodFloor1_NORM.png
+
+newmtl None_WoodFloor2.jpg
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd WoodFloor2.jpg
+#map_bump WoodFloor2_NORM.png

@@ -1,0 +1,24 @@
+
+#version 330
+
+in vec3 coord;
+in vec3 normal;
+
+out vec3 vertexNormal;
+out vec3 worldPos;
+out vec3 viewRay;
+
+layout(std140) uniform vertexParam
+{
+    mat4 wvpMatrix;
+	mat4 worldMatrix;
+	vec3 viewPos;
+};
+
+void main()
+{
+    gl_Position		= wvpMatrix * vec4(coord, 1.0);
+	vertexNormal	= normalize(mat3(worldMatrix) * normal).xyz;
+	worldPos		= (worldMatrix * vec4(coord, 1.0)).xyz;
+	viewRay			= worldPos - viewPos;
+}

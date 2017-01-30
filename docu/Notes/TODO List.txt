@@ -1,0 +1,38 @@
+
+ToDo list:
+	- Refactor XML parser and scanner (and move them to "ForkScript" library).
+	- Refactor GL and D3D render state management.
+	
+	- Add absolute path removal (also see "LogFile.cpp" ('ExtractImageFilename'), Line ~156).
+	- Add "Video::VertexBufferComposition" to allow multiple vertex buffers in a single object.
+	- Add more cases to switch in "TriangulateMeshGeometry" function (in "Physics/GeometryTriangulator.cpp" file).
+	- Add "PathDictionary" to shaders.
+	- Add "Resize" function to "RenderTarget" interface.
+	
+	- Make use of "Fork::EventEmitter" template class for "IO::Mouse", "IO::Keyboard" and all the other event emitter classes.
+	- Make more use of 'unique_ptr' instead of 'shared_ptr' (e.g. "RenderSystem").
+	- Make "PrimitiveRenderer" a standard member object of the "RenderSystem".
+	
+	- Rename "Scene::TexturedGeometry" to "Scene::ShadedGeometry".
+	
+	- Remove unicode filenames.
+	
+	- Extend shader constant buffer event handling (when GeometryNode will be drawn, when TexturedGeometry will be drawn, etc.).
+	
+	- Implement "Video::StorageBuffer" to D3D11 render system.
+	- Implement "Video::PrimitiveRenderer::ReleaseTextureFont" function.
+	
+	- Abstract "GLStateManager" and redesign state management to make use of state change optimizations for both GL and D3D render systems.
+	
+	- Replace "Matrix[N]::num" with "cols" and "rows".
+	- Replace "IO::File" classes with "std::iostream".
+	- Replace filenames with "IO::Filename" class.
+	- Replace shared_ptr in "Video::ImageWriter" interface by 'const reference'.
+
+Bug list:
+	- Selector rotation does not work precisely.
+	- TerminalModel::TextureEntry must update the texture size continuously.
+	- GLRenderContext::CopyTextureImage for main frame buffer does not flip image data on Y-axis.
+	- GUI::ScrollBar has not the correct bar size (2x the bar width/ height is insufficient respectively).
+	- D3D11RenderContext must have black clear color per default.
+

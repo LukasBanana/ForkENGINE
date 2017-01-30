@@ -1,0 +1,184 @@
+
+/*
+
+ForkAssets (*.forkassets) File-Format Specification
+
+--- Description ---
+
+The ForkAssets file format is a binary format to store assets for the ForkENGINE.
+An asset can be:
+- Image
+- Texture
+- Sampler
+- Model
+- Sound
+- Script
+- Shader
+
+This is based on the "Fork FileFormat Core Spec".
+
+--- History ---
+
+15/06/2014:
+	- Beginning with version 1.00.
+
+*/
+
+
+// --- Format overview --- //
+
+/*
+<BEGIN-OF-FILE>
+FileHeader
+ChunkDescList
+for i := 1 .. ChunkDescList.chunks.num {
+	Chunk<TYPE>
+}
+<END-OF-FILE>
+*/
+
+
+// --- Reserved chunk IDs --- //
+
+enum ChunkIDList : UInt32
+{
+	// Assets
+	DynamicImages	= 0x00000001,
+	StaticImages	= 0x00000002,
+	
+	Textures		= 0x00000003,
+	
+	Samplers		= 0x00000004,
+	
+	DynamicModels	= 0x00000005,
+	StaticModels	= 0x00000006,
+	
+	DynamicSounds	= 0x00000007,
+	StaticSounds	= 0x00000008,
+	
+	DynamicScripts	= 0x00000009,
+	StaticScripts	= 0x0000000a,
+	
+	DynamicShaders	= 0x0000000b,
+	StaticShaders	= 0x0000000c,
+};
+
+
+// --- Chunks (Assets) --- //
+
+/**
+Chunks where all dynamic images are stored.
+Dynamic images will be loaded from file.
+\since Version 1.00
+*/
+struct ChunkDynamicImages
+{
+	//! Dynamic image structure.
+	struct DynamicImage
+	{
+		//! Image flags.
+		enum Flags : UInt32
+		{
+			None			= 0,
+			ConvertToUByte	= (1 << 0),	//!< Convert image to a UByte image.
+			ConvertToFloat	= (1 << 1),	//!< Convert image to a Float image.
+		};
+		
+		UInt32 flags;					//!< Image flags.
+		String relativeFilename;		//!< Relative filename of the image file.
+	};
+	
+	LinkedList<DynamicImage> images;	//!< Linked list to the image data.
+};
+
+/**
+Chunks where all static images are stored.
+Static images are stored inside the scene file.
+\since Version 1.00
+*/
+struct ChunkStaticImages
+{
+	//! Static image structure.
+	struct StaticImage
+	{
+		//! Image data types.
+		enum ImageTypes : UInt8
+		{
+			UByte = 0,
+			Float = 1,
+		};
+		
+		UInt8		type;										//!< Image data type.
+		Vector2i	size;										//!< Image size.
+		
+		UInt8		numComponents;								//!< Number of color components per pixel. Must be 1, 2, 3 or 4.
+		
+		if (type == ImageTypes::UByte)
+			UInt8 imageData[size.x * size.y * numComponents];	//!< Image data.
+		else
+			Float32 imageData[size.x * size.y * numComponents];	//!< Image data.
+	};
+	
+	LinkedList<StaticImage> images;	//!< Linked list to the image data.
+};
+
+/**
+Chunks where all projections are stored.
+\since Version 1.00
+*/
+struct ChunkTextures
+{
+	struct Texture
+	{
+		//! Texture flags.
+		enum Flags : UInt32
+		{
+			None			= 0,
+			StaticImage		= (1 << 0),	//!< 'imageIndex' refers to a static image instead of a dynamic image.
+		};
+		
+		UInt32 flags;				//!< Texture flags.
+		UInt32 imageIndex;			//!< Index to the image object.
+	};
+	
+	LinkedList<Texture> textures;	//!< Linked list to the texture data.
+};
+
+/**
+Chunks where all dynamic models are stored.
+Dynamic models will be loaded from file.
+\since Version 1.00
+*/
+struct ChunkDynamicModels
+{
+	//! Dynamic model structure.
+	struct DynamicModel
+	{
+		//! Model flags.
+		enum Flags : UInt32
+		{
+			None				= 0,
+			CalcNormals			= (1 << 0),
+			CalcTangentSpace	= (1 << 1),
+		};
+		
+		UInt32 flags;					//!< Model flags.
+		String relativeFilename;		//!< Relative filename of the model file.
+	};
+	
+	LinkedList<DynamicModel> models;	//!< Linked list to the model data.
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

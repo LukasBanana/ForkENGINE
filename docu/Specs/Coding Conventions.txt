@@ -1,0 +1,156 @@
+
+This is minimal header file:
+
+	/*
+	 * <Name-here> header
+	 * 
+	 * This file is part of the "ForkENGINE" (Copyright (c) 2014 by Lukas Hermanns)
+	 * See "LICENSE.txt" for license information.
+	 */
+
+	#ifndef __FORK_<NAME-HERE>_H__
+	#define __FORK_<NAME-HERE>_H__
+
+
+
+
+	#endif
+
+
+
+	// ========================
+
+And this is the minmal source file:
+
+	/*
+	 * <Name-here> file
+	 * 
+	 * This file is part of the "ForkENGINE" (Copyright (c) 2014 by Lukas Hermanns)
+	 * See "LICENSE.txt" for license information.
+	 */
+
+
+
+	// ========================
+
+- All namespaces, classes, structures, enumerations and enumeration-entries begin in upper case, e.g. "Math::Vector2", "ColorFlags::Red" etc.
+
+- All variables, constants begin in lower case, e.g. "firstName", "Math::pi" etc.
+
+- All 'private' and 'protected' member variables end with '_', e.g. "int memberVar_;", "Math::Vector3f position_;" etc.
+
+- Mixed public, and private (or protected) class members are allowed, when they are meaningful.
+
+- Every simple getter function should start with "Get", and every simple setter function should start with "Set".
+
+  Example for getter/ setter:
+	float GetHeight() const
+	{
+		return height_;
+	}
+	void SetHeight(float height)
+	{
+		height_ = height;
+	}
+	
+  Example for non-getter/ setter: ( because the return value is not a simple member variable,
+									e.g. for a linked list this could take several computations to determine the list size )
+	size_t Size() const
+	{
+		return container.size();
+	}
+	void Resize(size_t size)
+	{
+		container.resize(size);
+	}
+	
+  Exception for getters (when just a reference is returned):
+  
+    class Foo
+	{
+		public:
+			inline int& Bar()
+			{
+				return bar_;
+			}
+		private:
+			int bar_;
+	}
+
+- Hex-literals are always in lower case, e.g. 0xff and not 0xFF.
+
+- Templates use "typename" types if its meant to be used for data types (like int, float etc.).
+
+- Templates use "class" types if its meant to be used for classes.
+
+- Custom exceptions are only in the "Fork" main namespace.
+
+- Setter or getter with a "Description" (e.g. "FontDescription") are named "Get/Set...Desc" and not "Get/Set...Description" to keep the name short but clear.
+
+- In MS/Windows specific code, don't write "hWnd", "hFont". Instead write "windowHandle", "fontHandle" etc., thus use clear names and not weird Microsoft notations.
+
+- Standard enumerations should be written like this:
+
+	enum class MyEnum
+	{
+		Entry1,
+		Entry2,
+		/* ... */
+	};
+
+- Flags enumerations should be written like this:
+
+	struct MyFlags
+	{
+		typedef unsigned int DataType;
+		enum : DataType
+		{
+			Flag1 = (1 << 0),
+			Flag2 = (1 << 1),
+			/* ... */
+		};
+	};
+
+- Error messages, telling that something failed, should be written as "[Do-]ing ... failed" and not "Could not [Do]",
+  e.g. "Loading texture \"" + filename + "\" failed" instead of "Could not load texture \"" + filename + "\"".
+  
+- Callbacks should never be implemented via function objects. Use class inheritance instead. Examples:
+
+	class AnyClass
+	{
+		public:
+			// This is the event receiver when the "AnyClass" is about the be resized.
+			class ResizeEventReceiver
+			{
+				public:
+					virtual ~ResizeEventReceiver()
+					{
+					}
+					virtual void OnResize()
+					{
+					}
+				protected:
+					ResizeEventReceiver()
+					{
+					}
+			};
+			
+			typedef std::shared_ptr<ResizeEventReceiver> ResizeEventReceiverPtr;
+			
+			inline void SetResizeEventReceiver(const ResizeEventReceiverPtr& resizeEventReceiver)
+			{
+				resizeEventReceiver_ = resizeEventReceiver;
+			}
+			
+		private:
+			ResizeEventReceiverPtr resizeEventReceiver_;
+	};
+
+- Never use "NULL"! Instead use "nullptr", except for handles (WinAPI); use "0" for handles, because handles are not always typedefs to pointers.
+
+- Avoid too much implicit programming, e.g. the core classes like "Vector3" only have explicit constructors, when only one input parameter is used:
+
+	explicit Vector2(float size);
+	explicit Vector3(float size);
+	explicit Vector4(float size);
+

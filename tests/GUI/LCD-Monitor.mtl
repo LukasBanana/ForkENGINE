@@ -1,0 +1,20 @@
+# Blender MTL File: 'LCD-Monitor.blend'
+# Material Count: 2
+
+newmtl Display-Case
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.011956 0.011956 0.011956
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Display-Case_display
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.011956 0.011956 0.011956
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2

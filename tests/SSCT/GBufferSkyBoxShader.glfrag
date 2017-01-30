@@ -1,0 +1,32 @@
+
+// Sky Box GLSL Fragement Shader
+// SSCT Test
+// 16/11/2014
+// Copyright (c) 2014 by Lukas Hermanns
+
+#version 330
+
+uniform samplerCube cubeMap;
+
+in vec3 vertexNormal;
+in vec3 worldPos;
+in vec3 viewRay;
+
+layout(location = 0) out vec4 colorOut;
+layout(location = 1) out vec4 normalOut;
+layout(location = 2) out vec4 depthOut;
+layout(location = 3) out vec4 specularOut;
+
+void main()
+{
+	// Sample normal vector from texture space
+	vec3 normal = normalize(vertexNormal);
+	
+	// Set output values
+	float depth = gl_FragCoord.z;
+	
+    colorOut	= texture(cubeMap, normalize(viewRay));
+	normalOut	= vec4(0.0);
+	depthOut	= vec4(depth, depth, 0.0, 1.0);
+	specularOut	= vec4(0.0);
+}

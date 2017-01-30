@@ -1,0 +1,282 @@
+/*
+ * Ray tracing GLSL pixel shader
+ * 
+ * This file is part of the "ForkENGINE" (Copyright (c) 2014 by Lukas Hermanns)
+ * See "LICENSE.txt" for license information.
+ */
+
+#version 330
+
+#include "../../shaders/Common.Shading.glsl"
+#include "../../shaders/Common.RayTracing.glsl"
+
+/* --- Macros --- */
+
+#define MAX_NUM_LIGHTS			4
+#define MAX_NUM_SPHERES			32
+#define MAX_NUM_PLANES			8
+#define MAX_NUM_REFLECTIONS		8
+
+#if (MAX_NUM_SPHERES >= MAX_NUM_PLANES)
+#	define MAX_NUM_GEOMETRIES	MAX_NUM_SPHERES
+#else
+#	define MAX_NUM_GEOMETRIES	MAX_NUM_PLANES	
+#endif
+
+#define OMEGA					999999.0
+#define EPSILON_REFLECT			0.02
+#define EPSILON_OCCLUSION		0.001
+
+// Options
+//#define ENABLE_PANORAMA_VIEW
+#define COMBINE_WITH_RASTERIZER
+
+/* --- Constant buffers --- */
+
+layout(std140) uniform pixelParam
+{
+	mat4 viewTransform;
+	mat4 invProjection;
+	mat4 viewProjection;
+	vec4 viewPosition;
+	vec4 ambientColor;
+	vec4 specularColor;
+};
+
+layout(std140) uniform lightParam
+{
+	LightSource	lights[MAX_NUM_LIGHTS];
+	int			numLights;
+};
+
+layout(std140) uniform sceneParam
+{
+	vec4	spheres[MAX_NUM_SPHERES];					// Position (xyz), Radius (w)
+	vec4	sphereColors[MAX_NUM_SPHERES];				// Color (rgb), Refraction (a)
+	vec4	planes[MAX_NUM_PLANES];						// Normal (xyz), Distance (w)
+	vec4	geometryReflectivites[MAX_NUM_GEOMETRIES];	// Plane (r), Sphere (g)
+	int		numSpheres;
+	int		numPlanes;
+};
+
+/* --- Uniforms --- */
+
+uniform sampler2D colorMap;
+
+/* --- Structures --- */
+
+struct Intersection
+{
+	vec3	point;
+	vec3	normal;
+	float	reflectivity;
+	vec4	color;
+};
+
+/* --- I/O members --- */
+
+in vec2 viewCoord;
+
+out vec4 fragColor;
+
+/* --- Functions --- */
+
+vec4 TexPlane(vec3 point, vec3 normal)
+{
+	/* Texture plane by dominant axis */
+	vec2 texCoord;
+	vec3 normalAbs = abs(normal);
+	
+	if (normalAbs.x >= normalAbs.y && normalAbs.x >= normalAbs.z)
+		texCoord = point.zy;
+	else if (normalAbs.y >= normalAbs.x && normalAbs.y >= normalAbs.z)
+		texCoord = point.xz;
+	else
+		texCoord = point.xy;
+	
+	return texture(colorMap, texCoord);
+}
+
+bool LineOcclusion(vec3 start, vec3 end)
+{
+	vec3 dir = normalize(end - start);
+	
+	/* Check intersection with spheres only */
+	for (int i = 0; i < numSpheres; ++i)
+	{
+		if (LineSphereOcclusion(start, end, dir, spheres[i]))
+			return true;
+	}
+	
+	/* No occlusion found */
+	return false;
+}
+
+// Shades the specified point (worldPos) with all light sources.
+vec3 ShadePoint(vec3 worldPos, vec3 normal, vec3 viewDir, float shininess = 90.0)
+{
+	vec3 shadingColor = vec3(0.0);
+	vec3 lightDir;
+	float intensity;
+	
+	vec3 occlusionPoint = worldPos + normal * EPSILON_OCCLUSION;
+	
+	for (int i = 0; i < numLights; ++i)
+	{
+		if (!LineOcclusion(lights[i].positionAndType.xyz, occlusionPoint))
+		{
+			/* Light contribution */
+			LightContribution(lights[i], worldPos, lightDir, intensity);
+			
+			/* Compute BRDF */
+			shadingColor += BlinnPhongBRDF(
+				normal, viewDir, lightDir, shininess,
+				ambientColor.rgb, lights[i].colorAndEnergy.rgb, specularColor.rgb
+			) * intensity;
+		}
+	}
+	
+	return shadingColor;
+}
+
+// Casts a ray into the entire scene.
+bool RayCast(vec3 rayOrigin, vec3 rayDir, out Intersection intersection)
+{
+	float prevDistSq = OMEGA;
+	vec3 point;
+	
+	int i = 0;
+	int geometryID = 0;
+	
+	/* Check intersection with all spheres */
+	for (; i < numSpheres; ++i)
+	{
+		if (RaySphereIntersection(rayOrigin, rayDir, spheres[i], point))
+		{
+			float distSq = LengthSq(point - rayOrigin);
+			
+			if (prevDistSq > distSq)
+			{
+				/* Store nearest intersection */
+				intersection.point	= point;
+				geometryID			= i + 1;
+				prevDistSq			= distSq;
+			}
+		}
+	}
+	
+	/* Check intersection with all planes */
+	for (i = 0; i < numPlanes; ++i)
+	{
+		if (RayPlaneIntersection(rayOrigin, rayDir, planes[i], point))
+		{
+			float distSq = LengthSq(point - rayOrigin);
+			
+			if (prevDistSq > distSq)
+			{
+				/* Store nearest intersection */
+				intersection.point	= point;
+				geometryID			= -i - 1;
+				prevDistSq			= distSq;
+			}
+		}
+	}
+	
+	/* Setup final intersection depending on geometry ID */
+	if (geometryID > 0)
+	{
+		i = geometryID - 1;
+		
+		/* Setup final intersection for sphere */
+		intersection.normal			= normalize(intersection.point - spheres[i].xyz);
+		intersection.reflectivity	= geometryReflectivites[i].r;
+		intersection.color			= sphereColors[i];
+	}
+	else if (geometryID < 0)
+	{
+		i = -geometryID - 1;
+		
+		/* Setup final intersection for plane */
+		intersection.normal			= planes[i].xyz;
+		intersection.reflectivity	= geometryReflectivites[i].g;
+		intersection.color			= TexPlane(intersection.point * 0.1, intersection.normal);
+	}
+	
+	return prevDistSq < OMEGA;
+}
+
+void main()
+{
+	/* Setup view ray */
+	vec4 viewRay = vec4(viewCoord, 1.0, 1.0);
+	
+	#ifdef ENABLE_PANORAMA_VIEW
+	
+	float theta = viewRay.x*M_PI;
+	
+	viewRay.x = sin(theta);
+	viewRay.z = cos(theta);
+	viewRay.w = 0.0;
+	
+	#else
+	
+	viewRay = invProjection * viewRay;
+	viewRay.xyz /= viewRay.w;
+	viewRay.w = 1.0;
+	
+	#endif
+	
+	viewRay = viewTransform * viewRay;
+	
+	/* Setup ray parameters */
+	vec3 rayOrigin		= viewPosition.xyz;
+	vec3 rayDir			= normalize(viewRay.xyz);
+	float rayIntensity	= 1.0;
+	
+	/* Compute shading */
+	vec4 shadingColor = vec4(vec3(0.0), 1.0);
+	
+	#ifdef COMBINE_WITH_RASTERIZER
+	vec4 worldPos = vec4(vec3(0.0), 1.0);
+	#endif
+	
+	for (int numReflections = 0; numReflections < MAX_NUM_REFLECTIONS; ++numReflections)
+	{
+		/* Perform ray casting */
+		Intersection intersection;
+		if (RayCast(rayOrigin, rayDir, intersection))
+		{
+			/* Shade pixel at intersection point */
+			vec3 color = ShadePoint(intersection.point, intersection.normal, -rayDir);
+			shadingColor.rgb += color * intersection.color.rgb * rayIntensity;
+			
+			#ifdef COMBINE_WITH_RASTERIZER
+			/* Store world position */
+			if (numReflections == 0)
+				worldPos = vec4(intersection.point, 1.0);
+			#endif
+			
+			/* Trace reflection */
+			if (intersection.reflectivity > EPSILON_REFLECT)
+			{
+				/* Setup reflection ray parameters */
+				rayDir			= reflect(rayDir, intersection.normal);
+				rayOrigin		= intersection.point + rayDir * EPSILON_OCCLUSION;
+				rayIntensity	*= intersection.reflectivity;
+			}
+			else
+				break;
+		}
+		else
+			break;
+	}
+	
+	/* Set final shading */
+	fragColor = ambientColor + shadingColor;
+	
+	#ifdef COMBINE_WITH_RASTERIZER
+	worldPos = viewProjection * worldPos;
+	worldPos.xyz /= worldPos.w;
+	gl_FragDepth = worldPos.z;
+	#endif
+}

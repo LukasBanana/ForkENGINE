@@ -1,0 +1,166 @@
+
+/*
+
+Date:		22/09/2014
+Subject: 	ForkENGINE Daemon Protocol Specification (v.1.0)
+
+The "ForkENGINE-Daemon" (ForkDaemon.exe/ ForkDaemonD.exe) is a background program,
+which implements the following network protocol and works as a service for the ForkENGINE and its editor ForkEd.
+
+Protocol is based on:	TCP/IP
+Default port number is:	22914
+
+The daemon is the server and several clients can connect to this server.
+The following pseudocode specifies all input (client to server) and output (server to client) messages
+
+*/
+
+
+/* --- All types --- */
+
+int8	-> 8-bit signed integer
+uint8	-> 8-bit unsigned integer
+int16	-> 16-bit signed integer
+uint16	-> 16-bit unsigned integer
+int32	-> 32-bit signed integer
+uint32	-> 32-bit unsigned integer
+real32	-> 32-bit real
+real64	-> 64-bit real
+
+// UTF-8 string
+struct string {
+	int8 data[1024]; // String characters with null terminator.
+}
+
+
+/* --- All enumerations (start indexing with 0) --- */
+
+enum PacketIDs {	
+	/* Common packets */
+	ClientShutDownIn = 1,
+	ConfirmOut,
+	ErrorOut,
+	StatusIn,				// Client queries the server status.
+	StatusOut,				// Servers tells client the server statis (amongst others: how many memory chunks the client owns).
+	
+	/* Service packets: "MemoryManager" */
+	MemoryPushStartIn,
+	MemoryPushStartOut,
+	MemoryPushSegmentIn,
+	MemoryPullStartIn,
+	MemoryPullStartOut,
+	MemoryPullSegmentIn,
+	MemoryPullSegmentOut,
+	MemoryStoreIn,			// Clients assigns the server to store a specific memory chunk to file.
+	MemoryDropIn,			// Client assigns the server to drop a specific or all of his memory chunks.
+	MemoryQueryIn,			// Client queries which memory chunks belong to him.
+	MemoryQueryOut,			// Servers tells client which memory chunks belong to him.
+}
+
+enum ErrorCodes {
+	MemoryStoreFailed = 1,
+	MemoryDropFailed,
+	//...
+}
+
+
+/* --- Common packets --- */
+
+struct PktClientShutDownIn {
+	uint8 id;	// Must be 'packetIDs::ClientShutDownIn'.
+};
+
+struct PktConfirmOut {
+	uint8 id;			// Must be 'PacketIDs::ConfirmOut'.
+	uint8 confirmId;	// Identifies the confirmed packet ID (see 'PacketIDs').
+}
+
+struct PktErrorOut {
+	uint8 id;		// Must be 'PacketIDs::ErrorOut'.
+	uint8 code;		// Type of error (see 'ErrorCodes').
+	string message;	// Additional error message.
+}
+
+struct PktStatusIn {
+	uint8 id;	// Must be 'PacketIDs::StatusIn'.
+}
+
+struct PktStatusOut {
+	uint8 id;				// Must be 'PacketIDs::StatusOut'.
+	uint8 numClients;		// Number of active clients the server is currently handling.
+	uint32 numMemoryChunks;	// Number of active memory chunks.
+	string info;			// Status information text.
+}
+
+
+/* --- Service packets: "MemoryManager" --- */
+
+// Push new memory chunk to server
+struct PktMemoryPushStartIn {
+	uint8 id;			// Must be 'PacketIDs::MemoryPushStartIn'.
+	uint32 chunkSize;	// Size of the memory chunk (in bytes).
+}
+
+// Receive memory chunk ID from server
+struct PktMemoryPushStartOut {
+	uint8 id;		// Must be 'PacketIDs::MemoryPushStartOut'.
+	uint32 chunkID;	// Memory chunk ID which was selected by the server. Use this for 'pull' requests. 0 is invalid!
+}
+
+struct PktMemoryPushSegmentIn {
+	uint8 id;				// Must be 'PacketIDs::MemoryPushSegmentIn'.
+	uint32 chunkID;			// Memory chunk ID which is to be filled.
+	uint32 chunkSize;		// Size of the memory chunk (in bytes).
+	uint32 segmentOffset;	// Memory segment offset (in bytes).
+	uint16 segmentSize;		// Memory segment size (in bytes), maximal 1024 bytes.
+	int8 data[segmentSize];	// Memory segment data.
+}
+
+// Pull old memory chunk from server
+struct PktMemoryPullStartIn {
+	uint8 id;		// Must be 'PacketIDs::MemoryPullStartIn'.
+	uint32 chunkID; // ID to the memory chunk which is queried by the client.
+}
+
+struct PktMemoryPullStartOut {
+	uint8 id;			// Must be 'PacketIDs::MemoryPullStartOut'.
+	uint32 chunkSize;	// Size of the memory chunk (in bytes).
+}
+
+// Client tells the server to expect the next segment
+struct PktMemoryPullSegmentIn {
+	uint8 id;				// Must be 'PacketIDs::MemoryPullSegmentIn'.
+}
+
+struct PktMemoryPullSegmentOut {
+	uint8 id;				// Must be 'PacketIDs::MemoryPullSegmentOut'.
+	uint32 chunkID;			// Memory chunk ID which is to be filled.
+	uint32 chunkSize;		// Size of the memory chunk (in bytes).
+	uint32 segmentOffset;	// Memory segment offset (in bytes).
+	uint16 segmentSize;		// Memory segment size (in bytes), maximal 1024 bytes.
+	int8 data[segmentSize];	// Memory segment data.
+}
+
+struct PktMemoryStoreIn {
+	uint8 id;			// Must be 'PacketIDs::MemoryStoreIn'.
+	uint32 chunkID;		// ID to the memory chunk which is to be stored into a file.
+	string filename;	// Output filename.	
+}
+
+struct PktMemoryDropIn {
+	uint8 id;		// Must be 'PacketIDs::MemoryDropIn'.
+	uint32 chunkID;	// ID to the memory chunk which is to be droped. If 0 => all chunks for this client will be droped.
+}
+
+struct PktMemoryQueryIn {
+	uint8 id;	// Must be 'PacketIDs::MemoryQueryIn'.
+}
+
+struct PktMemoryQueryOut {
+	uint8 id;					// Must be 'PacketIDs::MemoryQueryOut'.
+	uint8 numChunks;			// Number of memory chunks, maximal 255.
+	int32 chunkIDs[numChunks];	// Memory chunk ID list.
+}
+
+
+
