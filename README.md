@@ -40,8 +40,9 @@ Debug
 
 The pre-build binaries require the [VisualC++ 2015 redistributables](https://www.microsoft.com/en-us/download/details.aspx?id=48145) to be installed.
 
-Set the working directory of the editor ("ForkEd" project) to "editor/"
+Set the working directory of the editor ("ForkEd" project) to "editor/",
 or copy this folder to another location on your system.
+Press F3 in the editor to show/hide the console.
 
 For all the tests, the working directory is the respective folder of the test,
 e.g. for the RayTracing test it's "tests/RayTracing/".
